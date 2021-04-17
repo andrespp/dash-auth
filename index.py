@@ -3,8 +3,10 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import flask
+from flask_sqlalchemy import SQLAlchemy
 from dash.dependencies import Input, Output
-from app import server, app, config, DWO
+from os import path
+from app import server, app, db, config, DWO
 from apps import home, login
 
 # Header
@@ -147,6 +149,15 @@ if __name__ == '__main__':
         DEBUG=True
     else:
         DEBUG=False
+
+    # App DB Creation
+    #db = SQLAlchemy()
+    #db.init_app(server)
+    if not path.exists(config['APP']['DB_NAME']):
+        db.create_all(app=server)
+        print('Backend database created!')
+    else:
+        print('Backend database exists')
 
     # Print Server version
     print(f"Dash v{dash.__version__}.\n" \

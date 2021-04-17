@@ -9,6 +9,7 @@ import locale
 import os.path
 import traceback
 import uetl
+from flask_sqlalchemy import SQLAlchemy
 
 ## Settings
 CONFIG_FILE = 'config.ini'
@@ -48,7 +49,14 @@ except Exception as e:
 
 # Flask server
 server = flask.Flask(__name__)
-server.config['SECRET_KEY'] = config['SITE']['SECRET_KEY']
+server.config['SECRET_KEY'] = config['APP']['SECRET_KEY']
+server.config['SQLALCHEMY_DATABASE_URI'] = \
+                                    f"sqlite:///{config['APP']['DB_NAME']}"
+server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Auth db
+db = SQLAlchemy()
+db.init_app(server)
 
 # Dash app object
 THEME = dbc.themes.BOOTSTRAP
