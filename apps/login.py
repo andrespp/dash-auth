@@ -32,32 +32,36 @@ def layout():
     # Page Layout
     layout = [
 
-        # Header
-        dbc.Row([
-            dbc.Col([
-                html.H3('Login Page'),
-            ],
-                width=8,
-                className='text-center',
-            ),
-        ],
-            justify='around',
-            className='pt-3'
-        ),
-
-        # Form
-        dbc.Row([
-
-            dbc.Col(login_form,
-                    className='p-0',
+        html.Form([
+            # Header
+            dbc.Row([
+                dbc.Col([
+                    html.H3('Login Page'),
+                ],
                     width=8,
+                    className='text-center',
+                ),
+            ],
+                justify='around',
+                className='pt-3'
+            ),
+
+            # Form
+            dbc.Row([
+
+                dbc.Col(login_form,
+                        className='p-0',
+                        width=8,
+                ),
+
+            ],
+                justify='around',
+                className='py-3'
             ),
 
         ],
-            justify='around',
-            className='py-3'
-        )
-
+            method='POST',
+        ),
     ]
 
     return layout
