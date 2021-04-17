@@ -4,7 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from app import app, config, DWO
-from apps import home
+from apps import home, login
 
 # Header
 header = html.H3(config['SITE']['HEADER'],
@@ -23,14 +23,14 @@ header = html.H3(config['SITE']['HEADER'],
 navbar = dbc.NavbarSimple([
 
         # Login button
-        dbc.NavLink('Login', href='#'),
+        dbc.NavLink('Login', href='/login'),
 
         # Dashboards Dropdown
         dbc.DropdownMenu(
             children=[
                 dbc.DropdownMenuItem('Apps', header=True),
                 dbc.DropdownMenuItem('Sales', href='#'),
-                dbc.DropdownMenuItem('Finances', href=''),
+                dbc.DropdownMenuItem('Finances', href='#'),
             ],
             nav=True,
             in_navbar=True,
@@ -106,6 +106,7 @@ def display_page(pathname):
     err= html.Div([html.P('Page not found!')])
     switcher = {
         '/': home.layout,
+        '/login': login.layout(),
     }
     return switcher.get(pathname, err)
 
