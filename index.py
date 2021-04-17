@@ -2,8 +2,9 @@ import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+import flask
 from dash.dependencies import Input, Output
-from app import app, config, DWO
+from app import server, app, config, DWO
 from apps import home, login
 
 # Header
@@ -98,6 +99,34 @@ app.layout = dbc.Container([
 )
 
 ###############################################################################
+# Flask Routes
+
+@server.route('/')
+def index():
+    return flask.redirect(flask.url_for('/'))
+
+@server.route('/login', methods=['GET', 'POST'])
+def login_route():
+
+    # Process form
+    if flask.request.method == 'POST':
+        email = flask.request.form.get('email')
+        password = flask.request.form.get('password')
+
+        if len(password) < 6:
+            flask.flash('Password too short', category='error')
+        else:
+            flask.flash('Login successful!', category='success')
+
+        print(f'login={email}, paswd={password}')         
+
+    return flask.render_template('login.html', user='foo')
+
+@server.route('/logout', methods=['GET', 'POST'])
+def logout_route():
+    return '<p>logout</p>'
+
+###############################################################################
 # Callbacks
 @app.callback(Output('page-content', 'children'),
               Input('url', 'pathname'),
@@ -119,6 +148,12 @@ if __name__ == '__main__':
     else:
         DEBUG=False
 
+    # Print Server version
+    print(f"Dash v{dash.__version__}.\n" \
+          f"DCC v{dcc.__version__}.\n" \
+          f"DBC v{dbc.__version__}")
+
     # Run Server
     app.run_server(host='0.0.0.0', debug=DEBUG)
+    #server.run(host='0.0.0.0', debug=DEBUG)
 

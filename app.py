@@ -1,10 +1,10 @@
 """app.py
 """
 import dash
-import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import configparser
+import flask
 import locale
 import os.path
 import traceback
@@ -46,10 +46,16 @@ except Exception as e:
     DWO = None
     traceback.print_exc()
 
-# Dash app object (flask application)
+# Flask server
+server = flask.Flask(__name__)
+server.config['SECRET_KEY'] = config['SITE']['SECRET_KEY']
+
+# Dash app object
 THEME = dbc.themes.BOOTSTRAP
 app = dash.Dash(__name__,
+                server=server,
                 external_stylesheets=[THEME],
+                routes_pathname_prefix='/',
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, \
                                         initial-scale=0.8,  \
