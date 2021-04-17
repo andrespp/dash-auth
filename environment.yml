@@ -1,0 +1,23 @@
+name: dash-auth
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.8
+  - dash
+  - dash-bootstrap-components
+  - dash-core-components
+  - dash-daq
+  - dash-html-components
+  - dash-renderer
+  - dash-table
+  - flask-login
+  - pip
+  - sqlalchemy_schemadisplay
+  - unidecode
+  - xlsxwriter
+  - pip:
+    - odfpy
+    - uetl==0.0.6
