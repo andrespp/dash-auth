@@ -59,7 +59,6 @@ def update_graph01(click_data):
                   columns='product',
                   values='sales',
     ).reset_index()
-    print(df)
 
     # Build figure
     return px.bar(df, x='year', y=['A', 'B'], title="Produc Sales by year")
@@ -70,11 +69,12 @@ def update_graph01(click_data):
 def lookup_data():
     """Lookup report data
     """
-    if not DWO:
-        sample_data = {
+
+    sample_data = {
             'year':[2015, 2015, 2016, 2016, 2017, 2017, 2018, 2018],
             'product':'A B A B A B A B'.split(),
             'sales':[100, 200, 150, 250, 100, 350, 80, 250],
         }
-        return pd.DataFrame(sample_data)
+
+    return pd.DataFrame(sample_data)
 

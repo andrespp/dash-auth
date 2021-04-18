@@ -15,14 +15,14 @@ def layout():
     # Page Layout
     layout = [
 
-            dbc.Row(
+            dbc.Row([
                 dbc.Col(html.P('Financial Dasboard',
                                className='p-5 m-0 text-center'
                               ),
                         width={'size':12, 'offset':0},
                         className='px-3',
                 ),
-            ),
+            ]),
 
     ]
 

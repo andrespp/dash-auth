@@ -7,9 +7,10 @@ import configparser
 import flask
 import locale
 import os.path
-import traceback
+import models
 import uetl
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 ## Settings
 CONFIG_FILE = 'config.ini'
@@ -29,24 +30,13 @@ except:
 locale.setlocale(locale.LC_MONETARY, config['SITE']['LANG'])
 
 # Initialize Data Warehouse object
-try:
-    DWO = uetl.DataWarehouse(name=config['DW']['NAME'],
-                             dbms=config['DW']['DBMS'],
-                             host=config['DW']['HOST'],
-                             port=config['DW']['PORT'],
-                             base=config['DW']['BASE'],
-                             user=config['DW']['USER'],
-                             pswd=config['DW']['PASS'])
-    # Test dw db connection
-    if DWO.test_conn():
-        print('Data Warehouse DB connection succeed!')
-    else:
-        print('ERROR: Data Warehouse DB connection failed!')
-        exit(-1)
-except Exception as e:
-    DWO = None
-    print('ERROR: Data Warehouse DB connection failed!')
-    #traceback.print_exc()
+DWO = uetl.DataWarehouse(name=config['DW']['NAME'],
+                         dbms=config['DW']['DBMS'],
+                         host=config['DW']['HOST'],
+                         port=config['DW']['PORT'],
+                         base=config['DW']['BASE'],
+                         user=config['DW']['USER'],
+                         pswd=config['DW']['PASS'])
 
 # Flask server
 server = flask.Flask(__name__)
@@ -58,6 +48,15 @@ server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Auth db
 db = SQLAlchemy()
 db.init_app(server)
+
+# Login Manager
+login_manager = LoginManager()
+login_manager.login_view = '/login'
+login_manager.init_app(server)
+
+@login_manager.user_loader
+def load_user(id):
+    return models.User.query.get(int(id))
 
 # Dash app object
 THEME = dbc.themes.BOOTSTRAP
