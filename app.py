@@ -73,7 +73,3 @@ app = dash.Dash(__name__,
                )
 app.config.suppress_callback_exceptions=True
 
-print(f"Dash v{dash.__version__}.\n" \
-      f"DCC v{dcc.__version__}.\n" \
-      f"DBC v{dbc.__version__}")
-
