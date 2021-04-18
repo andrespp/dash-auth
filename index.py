@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output, State
 from werkzeug.security import check_password_hash
 from os import path
 from app import server, app, db, config, DWO
-from apps import home, login
+from apps import home, login, sales, financial
 
 ###############################################################################
 # Alerts
@@ -49,8 +49,8 @@ navbar = dbc.NavbarSimple([
         dbc.DropdownMenu(
             children=[
                 dbc.DropdownMenuItem('APPS', header=True),
-                dbc.DropdownMenuItem('Sales', href='#'),
-                dbc.DropdownMenuItem('Finances', href='#'),
+                dbc.DropdownMenuItem('Sales', href='/sales'),
+                dbc.DropdownMenuItem('Financial', href='/financial'),
             ],
             nav=True,
             in_navbar=True,
@@ -147,9 +147,13 @@ def display_dashboard(pathname):
     else:
         if pathname =='/':
             return home.layout
-        if pathname[:7] =='/logout':
+        elif pathname[:7] =='/logout':
             logout_user()
             return None
+        elif pathname =='/sales':
+            return sales.layout()
+        elif pathname =='/financial':
+            return sales.layout()
         else:
             return html.Div([html.P('404 Page not found!')])
 
