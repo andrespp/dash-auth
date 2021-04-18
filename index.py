@@ -241,8 +241,8 @@ if __name__ == '__main__':
         return models.User.query.get(int(id))
 
     # Print Server version
-    print(f"Dash v{dash.__version__}.\n" \
-          f"DCC v{dcc.__version__}.\n" \
+    print(f"Dash v{dash.__version__}\n" \
+          f"DCC v{dcc.__version__}\n" \
           f"DBC v{dbc.__version__}")
 
     # Run Server
