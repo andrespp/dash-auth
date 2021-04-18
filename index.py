@@ -4,8 +4,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 import flask
 import models
+from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from dash.dependencies import Input, Output
+from werkzeug.security import check_password_hash
 from os import path
 from app import server, app, db, config, DWO
 from apps import home, login
@@ -113,27 +116,37 @@ def login_route():
 
     # Process form
     if flask.request.method == 'POST':
+
+        # Retrieve login data
         email = flask.request.form.get('email')
         password = flask.request.form.get('password')
 
-        if len(password) < 6:
-            flask.flash('Password too short', category='error')
+        # Authenticate user
+        user = models.User.query.filter_by(email=email).first()
+        if user:
+            if check_password_hash(user.password, password):
+                login_user(user, remember=True)
+                flask.flash('Logged in successfully!', category='success')
+                return flask.redirect(flask.url_for('/'))
+            else:
+                flask.flash('Incorrect password, try again.', category='error')
         else:
-            flask.flash('Login successful!', category='success')
-
-        print(f'login={email}, paswd={password}')         
+            flask.flash('User not found!', category='error')
 
     return flask.render_template('login.html', user='foo')
 
-@server.route('/logout', methods=['GET', 'POST'])
+@server.route('/logout')
+@login_required
 def logout_route():
-    return '<p>logout</p>'
+    logout_user()
+    return flask.redirect('/login')
 
 ###############################################################################
 # Callbacks
 @app.callback(Output('page-content', 'children'),
               Input('url', 'pathname'),
              )
+@login_required
 def display_page(pathname):
     err= html.Div([html.P('Page not found!')])
     switcher = {
@@ -152,13 +165,20 @@ if __name__ == '__main__':
         DEBUG=False
 
     # App DB Creation
-    #db = SQLAlchemy()
-    #db.init_app(server)
     if not path.exists(config['APP']['DB_NAME']):
         db.create_all(app=server)
         print('Backend database created!')
     else:
         print('Backend database exists')
+
+    # Login Manager
+    login_manager = LoginManager()
+    login_manager.login_view = '/login'
+    login_manager.init_app(server)
+
+    @login_manager.user_loader
+    def load_user(id):
+        return models.User.query.get(int(id))
 
     # Print Server version
     print(f"Dash v{dash.__version__}.\n" \
