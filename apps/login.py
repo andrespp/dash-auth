@@ -39,6 +39,8 @@ def layout():
 
     # Page Layout
     layout = [
+        html.Div([
+
             # Alerts
             dbc.Row(
                 dbc.Col(alerts,
@@ -52,12 +54,12 @@ def layout():
                 dbc.Col([
                     html.H3('Login Page'),
                 ],
-                    width=8,
+                    width=6,
                     className='text-center',
                 ),
             ],
                 justify='around',
-                className='pt-3'
+                className='pt-5'
             ),
 
             # Form
@@ -65,7 +67,7 @@ def layout():
 
                 dbc.Col(login_form,
                         className='p-0',
-                        width=8,
+                        width=6,
                 ),
 
             ],
@@ -73,6 +75,7 @@ def layout():
                 className='py-3'
             ),
 
+        ], className='p-5 mt-4')
     ]
 
     return layout
