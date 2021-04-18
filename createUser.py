@@ -75,10 +75,10 @@ if __name__ == '__main__':
 
         else:
             user = User(email=email,
-                         first_name=name,
-                         password=generate_password_hash(password,
-                                                         method='sha256'
-                                                        )
+                        name=name,
+                        password=generate_password_hash(password,
+                                                        method='sha256'
+                                                       )
                        )
             db.create_all()
             db.session.add(user)
