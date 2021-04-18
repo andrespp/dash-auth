@@ -3,9 +3,10 @@
 import dash
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+from dash.dependencies import Input, Output, State
+from app import app
 
-
-# Data lookup
+alerts=[]
 
 # Report Definition
 
@@ -22,17 +23,30 @@ def layout():
 
         dbc.FormGroup([
             dbc.Label('Password', html_for='password'),
-            dbc.Input(type='password', id='password', placeholder='Enter password'),
+            dbc.Input(type='password',
+                      id='password',
+                      placeholder='Enter password'
+                     ),
         ]),
 
-        dbc.Button('Login', color='secondary'),
+        dbc.Button('Login',
+                   id='login-button',
+                   type='submit',
+                   color='secondary',
+                  ),
 
     ]
 
     # Page Layout
     layout = [
+            # Alerts
+            dbc.Row(
+                dbc.Col(alerts,
+                        width={'size':12, 'offset':0},
+                        className='px-3',
+                ),
+            ),
 
-        html.Form([
             # Header
             dbc.Row([
                 dbc.Col([
@@ -59,11 +73,7 @@ def layout():
                 className='py-3'
             ),
 
-        ],
-            method='POST',
-        ),
     ]
 
     return layout
 
-# Callbacks

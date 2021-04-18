@@ -4,14 +4,30 @@ import dash_core_components as dcc
 import dash_html_components as html
 import flask
 import models
-from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import login_user, logout_user, current_user
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from werkzeug.security import check_password_hash
 from os import path
 from app import server, app, db, config, DWO
 from apps import home, login
+
+###############################################################################
+# Alerts
+
+alerts=[]
+if not DWO:
+    alerts.append(
+        dbc.Alert('Data Warehouse unreachable!',
+                  color='danger',
+                  dismissable=True,
+                  className='my-1',
+                 )
+    )
+
+###############################################################################
+# Dash Components
 
 # Header
 header = html.H3(config['SITE']['HEADER'],
@@ -29,20 +45,20 @@ header = html.H3(config['SITE']['HEADER'],
 # Navbar
 navbar = dbc.NavbarSimple([
 
-        # Login button
-        dbc.NavLink('Login', href='/login'),
-
         # Dashboards Dropdown
         dbc.DropdownMenu(
             children=[
-                dbc.DropdownMenuItem('Apps', header=True),
+                dbc.DropdownMenuItem('APPS', header=True),
                 dbc.DropdownMenuItem('Sales', href='#'),
                 dbc.DropdownMenuItem('Finances', href='#'),
             ],
             nav=True,
             in_navbar=True,
-            label='DASHBOARDS',
+            label='Dashboards',
         ),
+
+        # Logout button
+        dbc.NavLink('Logout', href='/logout'),
 
     ],
 
@@ -51,24 +67,7 @@ navbar = dbc.NavbarSimple([
     className='p-0',
 )
 
-# Alerts
-alerts=[]
-if not DWO:
-    alerts.append(
-        dbc.Alert('Data Warehouse unreachable!',
-                  color='danger',
-                  dismissable=True,
-                  className='my-1',
-                 )
-    )
-
-# Dash App's layout
-app.title = config['SITE']['TITLE']
-
-app.layout = dbc.Container([
-
-    # represents the URL bar, doesn't render anything
-    dcc.Location(id='url', refresh=False),
+success = dbc.Container([
 
     # Header Row
     dbc.Row(
@@ -88,11 +87,28 @@ app.layout = dbc.Container([
                    ),
            ),
 
+    # Contents
+    html.Div(id='dashboard',
+            className='my-1'
+            ),
+
+],fluid=False
+)
+
+###############################################################################
+# Dash App's layout
+app.title = config['SITE']['TITLE']
+
+app.layout = dbc.Container([
+
+    # represents the URL bar, doesn't render anything
+    dcc.Location(id='url', refresh=False),
+
     # Alerts
     dbc.Row(
         dbc.Col(alerts,
                 width={'size':12, 'offset':0},
-                className='p-0',
+                className='px-3',
         ),
     ),
 
@@ -105,55 +121,95 @@ app.layout = dbc.Container([
 )
 
 ###############################################################################
-# Flask Routes
+# Callbacks
+@app.callback(Output('page-content', 'children'),
+              Input('url', 'pathname'),
+)
+def display_page(pathname):
 
-@server.route('/')
-def index():
-    return flask.redirect(flask.url_for('/'))
+    if pathname == '/logout':
+        return login.layout()
 
-@server.route('/login', methods=['GET', 'POST'])
-def login_route():
+    elif current_user.is_authenticated:
+        return success
 
-    # Process form
-    if flask.request.method == 'POST':
+    else:
+        return login.layout()
 
-        # Retrieve login data
-        email = flask.request.form.get('email')
-        password = flask.request.form.get('password')
+@app.callback(Output('dashboard', 'children'),
+              Input('url', 'pathname'),
+)
+def display_dashboard(pathname):
 
+    if not current_user.is_authenticated:
+        return None
+
+    else:
+        if pathname =='/':
+            return home.layout
+        if pathname[:7] =='/logout':
+            logout_user()
+            return None
+        else:
+            return html.Div([html.P('404 Page not found!')])
+
+@app.callback(Output('url', 'pathname'),
+              Input('login-button', 'n_clicks'),
+              State('email', 'value'),
+              State('password', 'value'),
+)
+def authentication(n_clicks, email, password):
+
+    login.alerts=[]
+
+    if not n_clicks or current_user.is_authenticated:
+        return '/'
+
+    if not email:
+        login.alerts.append(
+            dbc.Alert('Email required!',
+                      color='danger',
+                      dismissable=True,
+                      className='my-1',
+                     )
+        )
+
+    if not password:
+        login.alerts.append(
+            dbc.Alert('Password required!',
+                      color='danger',
+                      dismissable=True,
+                      className='my-1',
+                     )
+        )
+
+    if len(login.alerts) > 0:
+        return '/'
+
+    else:
         # Authenticate user
         user = models.User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
                 login_user(user, remember=True)
-                flask.flash('Logged in successfully!', category='success')
-                return flask.redirect(flask.url_for('/'))
             else:
-                flask.flash('Incorrect password, try again.', category='error')
+                login.alerts.append(
+                    dbc.Alert('Incorrect Password, try again!',
+                              color='danger',
+                              dismissable=True,
+                              className='my-1',
+                             )
+                )
         else:
-            flask.flash('User not found!', category='error')
+            login.alerts.append(
+                dbc.Alert('User not found!',
+                          color='danger',
+                          dismissable=True,
+                          className='my-1',
+                         )
+            )
 
-    return flask.render_template('login.html', user='foo')
-
-@server.route('/logout')
-@login_required
-def logout_route():
-    logout_user()
-    return flask.redirect('/login')
-
-###############################################################################
-# Callbacks
-@app.callback(Output('page-content', 'children'),
-              Input('url', 'pathname'),
-             )
-@login_required
-def display_page(pathname):
-    err= html.Div([html.P('Page not found!')])
-    switcher = {
-        '/': home.layout,
-        '/login': login.layout(),
-    }
-    return switcher.get(pathname, err)
+        return '/'
 
 ###############################################################################
 ## Main
@@ -187,5 +243,4 @@ if __name__ == '__main__':
 
     # Run Server
     app.run_server(host='0.0.0.0', debug=DEBUG)
-    #server.run(host='0.0.0.0', debug=DEBUG)
 

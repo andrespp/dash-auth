@@ -45,7 +45,8 @@ try:
         exit(-1)
 except Exception as e:
     DWO = None
-    traceback.print_exc()
+    print('ERROR: Data Warehouse DB connection failed!')
+    #traceback.print_exc()
 
 # Flask server
 server = flask.Flask(__name__)
@@ -61,9 +62,8 @@ db.init_app(server)
 # Dash app object
 THEME = dbc.themes.BOOTSTRAP
 app = dash.Dash(__name__,
-                server=server,
                 external_stylesheets=[THEME],
-                routes_pathname_prefix='/',
+                server=server,
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, \
                                         initial-scale=0.8,  \
