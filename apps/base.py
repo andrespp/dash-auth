@@ -14,24 +14,28 @@ from apps import home, sales, financial
 ###############################################################################
 # Report Definition
 
-def layout():
+def layout(alerts=None):
     """Define app layout
+
+    Parameters
+    ----------
+        alerts | list of dicts
+        Ex.:  [{'message':'This is an alert message', 'type':'danger'},
+               {'message':'Another alert message', 'type':'success'}]
+
     """
 
-    alerts=[]
-
-    # Test Data Warehouse DB connection
-    try:
-        if DWO.test_conn():
-            print('Data Warehouse DB connection succeed!')
-    except Exception as e:
-        alerts.append(
-            dbc.Alert('Data Warehouse unreachable!',
-                      color='danger',
-                      dismissable=True,
-                      className='my-1',
-                     )
-        )
+    # Process alerts
+    alert=[]
+    if alerts:
+        for i in alerts:
+            alert.append(
+                dbc.Alert(i['message'],
+                          color=i['type'],
+                          dismissable=True,
+                          className='my-1',
+                         )
+            )
 
     ## Objects
 
@@ -79,7 +83,7 @@ def layout():
 
         # Alerts
         dbc.Row(
-            dbc.Col(alerts,
+            dbc.Col(alert,
                     width={'size':12, 'offset':0},
                     className='px-0',
             ),

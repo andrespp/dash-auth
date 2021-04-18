@@ -12,6 +12,7 @@ from os import path
 from app import server, app, login_manager, db, config, DWO
 from apps import base, login
 
+alerts=[]
 ###############################################################################
 # Dash App's layout
 app.title = config['SITE']['TITLE']
@@ -40,7 +41,10 @@ def display_page(pathname):
         return login.layout()
 
     elif current_user.is_authenticated:
-        return base.layout()
+        global alerts
+        a = alerts
+        alerts=[]
+        return base.layout(a)
 
     else:
         return login.layout()
@@ -118,6 +122,15 @@ if __name__ == '__main__':
         print('Backend database created!')
     else:
         print('Backend database exists')
+
+    # Test Data Warehouse DB connection
+    try:
+        if DWO.test_conn():
+            print('Data Warehouse DB connection succeed!')
+    except Exception as e:
+        alerts.append(
+            {'message':'Data Warehouse unreachable!', 'type':'danger'}
+        )
 
     # Print Server version
     print(f"Dash v{dash.__version__}\n" \
