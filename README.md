@@ -29,3 +29,8 @@ $ conda env create -f environment.yml
 $ conda activate dash-auth
 $ python index.py
 ```
+
+### Create first user
+```bash
+$ ./createUser.py --name John --email foo@bar.com
+```
