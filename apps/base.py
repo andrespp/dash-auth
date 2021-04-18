@@ -9,7 +9,7 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 from flask_login import current_user, logout_user
 from app import app, config, DWO
-from apps import home, sales, financial
+from apps import home, users, sales, financial
 
 ###############################################################################
 # Report Definition
@@ -66,6 +66,17 @@ def layout(alerts=None):
                 nav=True,
                 in_navbar=True,
                 label='Dashboards',
+            ),
+
+            # Dashboards Dropdown
+            dbc.DropdownMenu(
+                children=[
+                    dbc.DropdownMenuItem('Users', href='/users'),
+                    dbc.DropdownMenuItem('Groups', href='/groups'),
+                ],
+                nav=True,
+                in_navbar=True,
+                label='Admin',
             ),
 
             # Logout button
@@ -133,6 +144,8 @@ def display_dashboard(pathname):
         elif pathname[:7] =='/logout':
             logout_user()
             return None
+        elif pathname =='/users':
+            return users.layout()
         elif pathname =='/sales':
             return sales.layout()
         elif pathname =='/financial':
