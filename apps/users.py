@@ -63,14 +63,14 @@ def update_table1(active_cell):
                    },
         style_cell_conditional=[
             {'if': {'column_id': 'id'},
-             'width': '20%',
+             'width': '10%',
             },
             {'if': {'column_id': 'name'},
-             'width': '50%',
+             'width': '20%',
             },
-            {'if': {'column_id': 'email'},
-             'width': '30%',
-            },
+            #{'if': {'column_id': 'email'},
+            # 'width': '50%',
+            #},
         ],
 
         tooltip_data=[
@@ -94,6 +94,8 @@ def lookup_data():
     uid=[]
     user=[]
     email=[]
+    created=[]
+    modified=[]
 
     users = User.query.all()
 
@@ -101,10 +103,21 @@ def lookup_data():
         uid.append(i.id)
         user.append(i.name)
         email.append(i.email)
+        created.append(i.created)
+        modified.append(i.modified)
 
-    return pd.DataFrame(
+    df = pd.DataFrame(
         {'uid':uid,
          'name':user,
          'email':email,
+         'created':created,
+         'modified':modified,
         }
     )
+
+    df['created'] = df['created'].apply(
+        lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
+    df['modified'] = df['modified'].apply(
+        lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
+
+    return df

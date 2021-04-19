@@ -5,6 +5,7 @@ import re
 import sys
 import errno
 import argparse
+import datetime as dt
 from models import User
 from app import server, db
 from getpass import getpass
@@ -78,7 +79,9 @@ if __name__ == '__main__':
                         name=name,
                         password=generate_password_hash(password,
                                                         method='sha256'
-                                                       )
+                                                       ),
+                        created=dt.datetime.today(),
+                        active=True,
                        )
             db.create_all()
             db.session.add(user)
