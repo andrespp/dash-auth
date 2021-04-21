@@ -119,7 +119,7 @@ def layout():
 # Callbacks
 @app.callback(
     Output('table1', 'children'),
-    Input('table1','active_cell'),
+    Input('modal','is_open'),
 )
 def update_table1(active_cell):
     """update_table
