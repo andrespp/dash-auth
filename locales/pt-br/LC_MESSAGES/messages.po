@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-01 15:49-0300\n"
-"PO-Revision-Date: 2021-05-02 09:56-0300\n"
+"POT-Creation-Date: 2021-05-02 17:46-0300\n"
+"PO-Revision-Date: 2021-05-02 17:47-0300\n"
 "Last-Translator: Andre Pereira\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -38,11 +38,11 @@ msgstr "Usuário não encontrado!"
 msgid "Data Warehouse unreachable!"
 msgstr "Data Warehouse indisponível!"
 
-#: apps/users.py:30
+#: apps/users.py:30 apps/users.py:155 apps/users.py:458 apps/users.py:466
 msgid "Active"
 msgstr "Ativo"
 
-#: apps/users.py:36
+#: apps/users.py:36 apps/users.py:454
 msgid "Name"
 msgstr "Nome"
 
@@ -50,7 +50,7 @@ msgstr "Nome"
 msgid "First and Last Name"
 msgstr "Primeiro e último nome"
 
-#: apps/users.py:42 apps/login.py:20
+#: apps/users.py:42 apps/users.py:455 apps/login.py:20
 msgid "Email"
 msgstr "Email"
 
@@ -90,101 +90,101 @@ msgstr "Limpar Campos"
 msgid "Create new user"
 msgstr "Criar novo usuário"
 
-#: apps/users.py:93
+#: apps/users.py:91
+msgid "Edit User"
+msgstr "Adicionar Usuário"
+
+#: apps/users.py:106
 msgid "System Users"
 msgstr "Usuários do sistema"
 
-#: apps/users.py:100
+#: apps/users.py:113
 msgid "Add User"
 msgstr "Adicionar Usuário"
 
-#: apps/users.py:221
+#: apps/users.py:159
+msgid "Edit"
+msgstr "Editar"
+
+#: apps/users.py:159 apps/users.py:168 apps/users.py:453
+msgid "UID"
+msgstr "UID"
+
+#: apps/users.py:168
+msgid "Remove"
+msgstr "Remover"
+
+#: apps/users.py:234
 msgid "Name is empty"
 msgstr "Nome em branco"
 
-#: apps/users.py:224
+#: apps/users.py:237
 msgid "User name too short."
 msgstr "Nome de usuário muito curto."
 
-#: apps/users.py:227
+#: apps/users.py:240
 msgid "User name contains invalid characters."
 msgstr "Nome de usuário contém caracteres inválidos."
 
-#: apps/users.py:235
+#: apps/users.py:248
 msgid "Email is empty"
 msgstr "Email em branco"
 
-#: apps/users.py:241 apps/users.py:338
+#: apps/users.py:254 apps/users.py:371
 msgid "Invalid email"
 msgstr "Email inválido"
 
-#: apps/users.py:246
+#: apps/users.py:259
 msgid "Password is empty"
 msgstr "Senha em branco"
 
-#: apps/users.py:253 apps/users.py:370
+#: apps/users.py:266 apps/users.py:403
 msgid "The password must be at least 8 characters long."
 msgstr "Senha deve ter no mínimo 8 caracteres."
 
-#: apps/users.py:255 apps/users.py:373
+#: apps/users.py:268 apps/users.py:406
 msgid "The password must have numbers."
 msgstr "Senha deve conter números."
 
-#: apps/users.py:257 apps/users.py:376
+#: apps/users.py:270 apps/users.py:409
 msgid "The password must haver uppercase and lowercase letters."
 msgstr "Senha deve conter letras minúsculas e maiúsculas."
 
-#: apps/users.py:259 apps/users.py:379
+#: apps/users.py:272 apps/users.py:412
 msgid "The password must have special symbols."
 msgstr "Senha deve conter caracteres especiais."
 
-#: apps/users.py:264 apps/users.py:389
+#: apps/users.py:277 apps/users.py:422
 msgid "Passwords don't match."
 msgstr "Senhas não coincidem."
 
-#: apps/users.py:284
+#: apps/users.py:297
 msgid "Acount created!"
 msgstr "Conta de usuário criada!"
 
-#: apps/users.py:295
+#: apps/users.py:308
 msgid "Error creating account:"
 msgstr "Erro ao criar conta de usuário:"
 
-#: apps/users.py:314
+#: apps/users.py:347
 msgid "Name too short."
 msgstr "Nome muito curto."
 
-#: apps/users.py:316
+#: apps/users.py:349
 msgid "Invalid characters."
 msgstr "Caracteres inválidos."
 
-#: apps/users.py:386
+#: apps/users.py:419
 msgid "Fill password field."
 msgstr "Preencha a senha."
 
-#: apps/users.py:420
-msgid "uid"
-msgstr "UID"
-
-#: apps/users.py:421
-msgid "name"
-msgstr "Nome"
-
-#: apps/users.py:422
-msgid "email"
-msgstr "Email"
-
-#: apps/users.py:423
-msgid "created"
+#: apps/users.py:456 apps/users.py:462
+msgid "Created"
 msgstr "Criado"
 
-#: apps/users.py:424
-msgid "modified"
+#: apps/users.py:457 apps/users.py:464
+msgid "Modified"
 msgstr "Modificado"
-
-#: apps/users.py:425
-msgid "active"
-msgstr "Ativo"
 
 #: apps/home.py:14
 msgid "Dashboard"
@@ -241,3 +241,15 @@ msgstr "Login"
 #: apps/login.py:55
 msgid "Login Page"
 msgstr "Entre com a sua conta"
+
+#~ msgid "name"
+#~ msgstr "Nome"
+
+#~ msgid "uid"
+#~ msgstr "UID"
+
+#~ msgid "email"
+#~ msgstr "Email"
+
+#~ msgid "active"
+#~ msgstr "Ativo"

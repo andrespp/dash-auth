@@ -69,8 +69,9 @@ def load_user(id):
 
 # Dash app object
 THEME = dbc.themes.BOOTSTRAP
+FA = "https://use.fontawesome.com/releases/v5.15.3/css/all.css"
 app = dash.Dash(__name__,
-                external_stylesheets=[THEME],
+                external_stylesheets=[THEME, FA],
                 server=server,
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, \

@@ -9,7 +9,7 @@ import dash_table
 import datetime as dt
 import traceback
 from sqlalchemy.exc import IntegrityError
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, ALL
 from werkzeug.security import generate_password_hash
 from app import _, app, db, DWO
 from models import User
@@ -83,6 +83,19 @@ def layout():
             ),
         ]
     )
+    # user edit modal
+    user_edit_modal = html.Div(
+        [
+            dbc.Modal(
+                [
+                    dbc.ModalHeader([_('Edit User')]),
+                    dbc.ModalBody(),
+                ],
+                is_open=False,
+                id='user-edit-modal',
+            )
+        ]
+    )
 
     # Page Layout
     layout = [
@@ -97,7 +110,9 @@ def layout():
                     className='px-3',
             ),
 
-            dbc.Col(dbc.Button(_('Add User'),
+            dbc.Col(dbc.Button([_('Add User'),
+                                html.I(className="fa fa-user-plus ml-2")
+                               ],
                                id='open',
                                color='secondary',
                                size='sm',
@@ -119,6 +134,7 @@ def layout():
 
         # Modal Row
         dbc.Row(modal),
+        dbc.Row(user_edit_modal),
 
     ]
 
@@ -133,41 +149,38 @@ def layout():
 def update_table1(is_open):
     """update_table
     """
-
     df = lookup_data()
 
-    table = dash_table.DataTable(
-        columns=[{'name': i, 'id': i,
-                  'type':'numeric',
-                 } for i in df.columns],
-        data=df.to_dict('records'),
-        style_cell={'textAlign':'center',
-                    'minWidth':'100%',
-                    'overflow': 'hidden',
-                    'textOverflow': 'ellipsis',
-                    'maxWidth': 0
-                   },
-        style_cell_conditional=[
-            {'if': {'column_id': 'uid'},
-             'width': '5%',
-            },
-            {'if': {'column_id': 'name'},
-             'width': '20%',
-            },
-            {'if': {'column_id': 'active'},
-             'width': '10%',
-            },
-        ],
+    # Add icons
+    df[_('Active')] = df[_('Active')].apply(lambda x:
+        html.I(className="fa fa-check") if x else None
+    )
 
-        tooltip_data=[
-            {
-                column: {'value': str(value), 'type': 'markdown'}
-                for column, value in row.items()
-            } for row in df.to_dict('records')
-        ],
-        tooltip_duration=None,
-    ),
-    return table
+    df[_('Edit')] = df[_('UID')].apply(lambda x:
+        dbc.Button(
+            html.I(className="fa fa-user-edit"),
+            color='light', size='sm',
+            className='bg-transparent',
+            id={'type':'update-user', 'index':x},
+        )
+    )
+
+    df[_('Remove')] = df[_('UID')].apply(lambda x:
+        dbc.Button(
+            html.I(className="fa fa-trash-alt"),
+            color='light', size='sm',
+        )
+    )
+
+    # Return table
+    return dbc.Table.from_dataframe(df,
+                                     striped=True,
+                                     bordered=True,
+                                     hover=True,
+                                     responsive=True,
+                                     size='sm',
+                                     style={'textAlign':'center'}
+                                    )
 
 @app.callback(
     Output('modal', 'is_open'),
@@ -296,6 +309,26 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
                          dismissable=True, color='danger'), name, email, p1, p2
 
 @app.callback(
+    Output('user-edit-modal','is_open'),
+    Input({'type':'update-user', 'index':ALL}, 'n_clicks'),
+)
+def update_user_btn(n_clicks):
+
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        return False
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        print(button_id)   
+
+    if all([i == None for i in n_clicks]): # list is all None
+        return False
+    else:
+        return True
+
+
+@app.callback(
     Output('name', 'invalid'),
     Output('name', 'title'),
     Input('name','value'),
@@ -417,20 +450,20 @@ def lookup_data():
         active.append(i.active)
 
     df = pd.DataFrame(
-        {_('uid'):uid,
-         _('name'):user,
-         _('email'):email,
-         _('created'):created,
-         _('modified'):modified,
-         _('active'):active,
+        {_('UID'):uid,
+         _('Name'):user,
+         _('Email'):email,
+         _('Created'):created,
+         _('Modified'):modified,
+         _('Active'):active,
         }
     )
 
-    df[_('created')] = df[_('created')].apply(
+    df[_('Created')] = df[_('Created')].apply(
         lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
-    df[_('modified')] = df[_('modified')].apply(
+    df[_('Modified')] = df[_('Modified')].apply(
         lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
-    df[_('active')] = df[_('active')].apply(lambda x: 'X' if x else None)
+    df[_('Active')] = df[_('Active')].apply(lambda x: 'X' if x else None)
 
     return df
 
