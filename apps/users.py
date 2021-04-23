@@ -26,6 +26,13 @@ def layout():
         html.Div(id='signup-alert'),
 
         dbc.FormGroup([
+            dbc.Checklist(id='user-options',
+                          options=[{'label':'Active', 'value':'active'}],
+                          value=['active'],
+                         ),
+        ]),
+
+        dbc.FormGroup([
             dbc.Label('Name', html_for='name'),
             dbc.Input(type='text', id='name',
                       placeholder='First and Last Name'),
@@ -188,8 +195,9 @@ def toggle_modal(n1, n2, is_open):
     State('email','value'),
     State('password1','value'),
     State('password2','value'),
+    State('user-options','value'),
 )
-def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2):
+def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
     """create_user()
     """
     user = {'name':None, 'email':None, 'password':None, 'active':False}
@@ -203,6 +211,10 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2):
         btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
         if btn_id == 'modal' or btn_id == 'clear':
             return None, None, None, None, None
+
+    # Check user options
+    if 'active' in options:
+        user['active'] = True
 
     # Check Name
     if not name:
@@ -253,7 +265,7 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2):
                                                     method='sha256'
                                                    ),
                     created=dt.datetime.today(),
-                    active=True,
+                    active=user['active'],
                    )
 
         db.create_all()
