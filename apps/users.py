@@ -62,6 +62,8 @@ def layout():
                     dbc.ModalBody(signup_form),
                     dbc.ModalFooter([
                         dbc.Button('Close', id='close', className='ml-auto'),
+                        dbc.Button('Clear Fields', id='clear',
+                                   className='ml-1'),
                         dbc.Button('Create new user',
                                    id='signup-button',
                                    color='primary',
@@ -180,13 +182,14 @@ def toggle_modal(n1, n2, is_open):
     Output('password1','value'),
     Output('password2','value'),
     Input('signup-button','n_clicks'),
+    Input('clear','n_clicks'),
     Input('modal','is_open'),
     State('name','value'),
     State('email','value'),
     State('password1','value'),
     State('password2','value'),
 )
-def create_user_btn(btn, is_open, name, email, p1, p2):
+def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2):
     """create_user()
     """
     user = {'name':None, 'email':None, 'password':None, 'active':False}
@@ -197,7 +200,8 @@ def create_user_btn(btn, is_open, name, email, p1, p2):
     ctx = dash.callback_context
 
     if ctx.triggered:
-        if ctx.triggered[0]['prop_id'].split('.')[0] == 'modal':
+        btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        if btn_id == 'modal' or btn_id == 'clear':
             return None, None, None, None, None
 
     # Check Name
@@ -332,7 +336,7 @@ def validate_signup_password(p1, p2, is_open, btn, sp1, sp2):
     ctx = dash.callback_context
     if ctx.triggered:
         btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btn_id == 'modal':
+        if btn_id == 'modal' or 'clear':
             return False, False, None, None
 
 
