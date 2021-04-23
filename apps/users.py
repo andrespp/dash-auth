@@ -121,7 +121,7 @@ def layout():
     Output('table1', 'children'),
     Input('modal','is_open'),
 )
-def update_table1(active_cell):
+def update_table1(is_open):
     """update_table
     """
 
@@ -175,30 +175,41 @@ def toggle_modal(n1, n2, is_open):
 
 @app.callback(
     Output('signup-alert','children'),
+    Output('name','value'),
+    Output('email','value'),
+    Output('password1','value'),
+    Output('password2','value'),
     Input('signup-button','n_clicks'),
+    Input('modal','is_open'),
     State('name','value'),
     State('email','value'),
     State('password1','value'),
     State('password2','value'),
 )
-def create_user_btn(btn, name, email, p1, p2):
+def create_user_btn(btn, is_open, name, email, p1, p2):
     """create_user()
     """
     user = {'name':None, 'email':None, 'password':None, 'active':False}
 
     if not btn:
-        return None
+        return None, None, None, None, None #hh, name, email, p1, p2
+
+    ctx = dash.callback_context
+
+    if ctx.triggered:
+        if ctx.triggered[0]['prop_id'].split('.')[0] == 'modal':
+            return None, None, None, None, None
 
     # Check Name
     if not name:
         return dbc.Alert('Name is empty',
-                         dismissable=True, color='danger'),
+                         dismissable=True, color='danger'), name, email, p1, p2
     elif len(name.strip()) < 3:
         return dbc.Alert('User name too short.',
-                         dismissable=True, color='danger'),
+                         dismissable=True, color='danger'), name, email, p1, p2
     elif not name.replace(" ", "").isalpha():
         return dbc.Alert('User name contains invalid characters.',
-                         dismissable=True, color='danger'),
+                         dismissable=True, color='danger'), name, email, p1, p2
     else:
         user['name'] = name.strip()
 
@@ -206,24 +217,27 @@ def create_user_btn(btn, name, email, p1, p2):
     pattern = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
     if not email:
         return dbc.Alert('Email is empty',
-                         dismissable=True, color='danger'),
+                         dismissable=True, color='danger'), name, email, p1, p2
 
     elif re.match(pattern, email):
         user['email'] = email
     else:
         return dbc.Alert('Invalid email',
-                         dismissable=True, color='danger'),
+                         dismissable=True, color='danger'), name, email, p1, p2
 
     # Check password
     if not p1:
         return dbc.Alert('Password is empty',
-                         dismissable=True, color='danger'),
+                         dismissable=True,
+                         color='danger'), name, email, None, None
     if len(p1) < 6:
         return dbc.Alert('The password must be at least 6 characters long.',
-                         dismissable=True, color='danger'),
+                         dismissable=True,
+                         color='danger'), name, email, None, None
     elif not p1==p2:
         return dbc.Alert('Passwords don\'t match.',
-                         dismissable=True, color='danger'),
+                         dismissable=True,
+                         color='danger'), name, email, None, None
     else:
         user['password'] = p1
 
@@ -241,17 +255,19 @@ def create_user_btn(btn, name, email, p1, p2):
         db.create_all()
         db.session.add(usr)
         db.session.commit()
-        return dbc.Alert('Acount created!', dismissable=True, color='success'),
+        return dbc.Alert('Acount created!',
+                         dismissable=True,
+                         color='success'), None, None, None, None
     except IntegrityError:
         db.session.rollback()
-        return dbc.Alert(f'Error creating account! User already exists',
-                         dismissable=True, color='danger'),
+        return dbc.Alert(
+            f'Error creating account! User already exists',
+            dismissable=True, color='danger'), name, email, None, None
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
         return dbc.Alert(f'Error creating account: {e}',
-                         dismissable=True, color='danger'),
-
+                         dismissable=True, color='danger'), name, email, p1, p2
 
 @app.callback(
     Output('name', 'invalid'),
@@ -261,6 +277,7 @@ def create_user_btn(btn, name, email, p1, p2):
 def validate_signup_name(name):
     """Validade signup form
     """
+
     # blank cell is not invalid
     if not name:
         return False, None
@@ -282,6 +299,7 @@ def validate_signup_name(name):
 def validate_signup_email(email):
     """Validade signup form
     """
+
     # blank cell is not invalid
     if not email:
         return False, None
@@ -300,14 +318,23 @@ def validate_signup_email(email):
     Output('password2', 'title'),
     Input('password1','value'),
     Input('password2','value'),
+    Input('modal','is_open'),
+    Input('signup-button','n_clicks'),
     State('password1','invalid'),
     State('password2','invalid'),
 )
-def validate_signup_password(p1, p2, sp1, sp2):
+def validate_signup_password(p1, p2, is_open, btn, sp1, sp2):
     """Validade signup form
     """
     invalid = {'p1':sp1, 'p2':sp2}
     title = {'p1':None, 'p2':None}
+
+    ctx = dash.callback_context
+    if ctx.triggered:
+        btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        if btn_id == 'modal':
+            return False, False, None, None
+
 
     if p1:
         if len(p1) < 6:
