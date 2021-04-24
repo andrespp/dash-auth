@@ -246,9 +246,19 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
         return dbc.Alert('Password is empty',
                          dismissable=True,
                          color='danger'), name, email, None, None
-    if len(p1) < 6:
-        return dbc.Alert('The password must be at least 6 characters long.',
-                         dismissable=True,
+
+    pwd_check = password_check(p1)
+    if not pwd_check['ok']:
+        if pwd_check['length_error']:
+            msg = 'The password must be at least 8 characters long.'
+        elif pwd_check['digit_error']:
+            msg = 'The password must have numbers.'
+        elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
+            msg = 'The password must haver uppercase and lowercase letters.'
+        elif pwd_check['symbol_error']:
+            msg = 'The password must have special symbols.'
+
+        return dbc.Alert(msg, dismissable=True,
                          color='danger'), name, email, None, None
     elif not p1==p2:
         return dbc.Alert('Passwords don\'t match.',
@@ -348,14 +358,22 @@ def validate_signup_password(p1, p2, is_open, btn, sp1, sp2):
     ctx = dash.callback_context
     if ctx.triggered:
         btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btn_id == 'modal' or 'clear':
+        if btn_id == 'modal' or btn_id == 'clear':
             return False, False, None, None
 
-
     if p1:
-        if len(p1) < 6:
+        pwd_check = password_check(p1)
+        if not pwd_check['ok']:
             invalid['p1'] = True
-            title['p1'] = 'The password must be at least 6 characters long.'
+            if pwd_check['length_error']:
+                title['p1']='The password must be at least 8 characters long.'
+            elif pwd_check['digit_error']:
+                title['p1'] = 'The password must have numbers.'
+            elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
+                title['p1'] = \
+                    'The password must haver uppercase and lowercase letters.'
+            elif pwd_check['symbol_error']:
+                title['p1'] = 'The password must have special symbols.'
         else:
             invalid['p1'] = False
 
@@ -412,3 +430,44 @@ def lookup_data():
     df['active'] = df['active'].apply(lambda x: 'X' if x else None)
 
     return df
+
+###############################################################################
+# Other functions
+def password_check(password):
+    """
+    Verify the strength of 'password'
+    Returns a dict indicating the wrong criteria
+    A password is considered strong if:
+        8 characters length or more
+        1 digit or more
+        1 symbol or more
+        1 uppercase letter or more
+        1 lowercase letter or more
+    """
+
+    # calculating the length
+    length_error = len(password) < 8
+
+    # searching for digits
+    digit_error = re.search(r"\d", password) is None
+
+    # searching for uppercase
+    uppercase_error = re.search(r"[A-Z]", password) is None
+
+    # searching for lowercase
+    lowercase_error = re.search(r"[a-z]", password) is None
+
+    # searching for symbols
+    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
+
+    # overall result
+    password_ok = not ( length_error or digit_error or uppercase_error or lowercase_error or symbol_error )
+
+    return {
+        'ok' : password_ok,
+        'length_error' : length_error,
+        'digit_error' : digit_error,
+        'uppercase_error' : uppercase_error,
+        'lowercase_error' : lowercase_error,
+        'symbol_error' : symbol_error,
+    }
