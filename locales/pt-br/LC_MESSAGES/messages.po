@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-02 17:46-0300\n"
-"PO-Revision-Date: 2021-05-02 17:47-0300\n"
+"POT-Creation-Date: 2021-06-09 21:23-0300\n"
+"PO-Revision-Date: 2021-06-09 21:29-0300\n"
 "Last-Translator: Andre Pereira\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: index.py:66
 msgid "Email required!"
-msgstr "Email em branco!"
+msgstr "E-mail em branco!"
 
 #: index.py:75
 msgid "Password required!"
@@ -38,153 +38,208 @@ msgstr "Usuário não encontrado!"
 msgid "Data Warehouse unreachable!"
 msgstr "Data Warehouse indisponível!"
 
-#: apps/users.py:30 apps/users.py:155 apps/users.py:458 apps/users.py:466
-msgid "Active"
-msgstr "Ativo"
-
-#: apps/users.py:36 apps/users.py:454
-msgid "Name"
-msgstr "Nome"
-
-#: apps/users.py:38
-msgid "First and Last Name"
-msgstr "Primeiro e último nome"
-
-#: apps/users.py:42 apps/users.py:455 apps/login.py:20
-msgid "Email"
-msgstr "Email"
-
-#: apps/users.py:43 apps/login.py:21
-msgid "Enter email"
-msgstr "Inserir email"
-
-#: apps/users.py:47 apps/login.py:25
-msgid "Password"
-msgstr "Senha"
-
-#: apps/users.py:50 apps/login.py:28
-msgid "Enter password"
-msgstr "Inserir senha"
-
-#: apps/users.py:55
-msgid "Password (Confirm)"
-msgstr "Senha (confirmação)"
-
-#: apps/users.py:58
-msgid "Confirm password"
-msgstr "Confirmar Senha"
-
-#: apps/users.py:68
-msgid "Add user"
-msgstr "Adicionar Usuário"
-
-#: apps/users.py:71
-msgid "Close"
-msgstr "Fechar"
-
-#: apps/users.py:72
-msgid "Clear Fields"
-msgstr "Limpar Campos"
-
-#: apps/users.py:74
-msgid "Create new user"
-msgstr "Criar novo usuário"
-
-#: apps/users.py:91
-msgid "Edit User"
-msgstr "Adicionar Usuário"
-
-#: apps/users.py:106
+#: apps/users.py:30
 msgid "System Users"
 msgstr "Usuários do sistema"
 
-#: apps/users.py:113
+#: apps/users.py:37
 msgid "Add User"
 msgstr "Adicionar Usuário"
 
-#: apps/users.py:159
-msgid "Edit"
-msgstr "Editar"
+#: apps/users.py:78 apps/users.py:146 apps/users.py:271 apps/users.py:432
+#: apps/users.py:687 apps/users.py:695
+msgid "Active"
+msgstr "Ativo"
 
-#: apps/users.py:159 apps/users.py:168 apps/users.py:453
+#: apps/users.py:84 apps/users.py:163 apps/users.py:436 apps/users.py:683
+msgid "Name"
+msgstr "Nome"
+
+#: apps/users.py:86 apps/users.py:165
+msgid "First and Last Name"
+msgstr "Primeiro e último nome"
+
+#: apps/users.py:90 apps/users.py:169 apps/users.py:436 apps/users.py:684
+#: apps/login.py:20
+msgid "Email"
+msgstr "Email"
+
+#: apps/users.py:91 apps/users.py:171 apps/login.py:21
+msgid "Enter email"
+msgstr "Inserir email"
+
+#: apps/users.py:95 apps/users.py:178 apps/login.py:25
+msgid "Password"
+msgstr "Senha"
+
+#: apps/users.py:98 apps/users.py:181 apps/login.py:28
+msgid "Enter password"
+msgstr "Inserir senha"
+
+#: apps/users.py:103 apps/users.py:186
+msgid "Password (Confirm)"
+msgstr "Senha (confirmação)"
+
+#: apps/users.py:106 apps/users.py:189
+msgid "Confirm password"
+msgstr "Confirmar Senha"
+
+#: apps/users.py:116
+msgid "Add user"
+msgstr "Adicionar Usuário"
+
+#: apps/users.py:119 apps/users.py:202
+msgid "Close"
+msgstr "Fechar"
+
+#: apps/users.py:120
+msgid "Clear Fields"
+msgstr "Limpar Campos"
+
+#: apps/users.py:122
+msgid "Create new user"
+msgstr "Criar novo usuário"
+
+#: apps/users.py:153 apps/users.py:275 apps/users.py:284 apps/users.py:428
+#: apps/users.py:682
 msgid "UID"
 msgstr "UID"
 
-#: apps/users.py:168
+#: apps/users.py:199
+msgid "Edit User"
+msgstr "Adicionar Usuário"
+
+#: apps/users.py:207
+msgid "Save"
+msgstr "Salvar"
+
+#: apps/users.py:231
+msgid "Remove User"
+msgstr "Remover Usuário"
+
+#: apps/users.py:237
+msgid "No"
+msgstr "Não"
+
+#: apps/users.py:242
+msgid "Yes!"
+msgstr "Sim!"
+
+#: apps/users.py:275
+msgid "Edit"
+msgstr "Editar"
+
+#: apps/users.py:284
 msgid "Remove"
 msgstr "Remover"
 
-#: apps/users.py:234
+#: apps/users.py:488
+msgid "User"
+msgstr "Usuário"
+
+#: apps/users.py:488
+msgid "will be deleted."
+msgstr "será removido."
+
+#: apps/users.py:489
+msgid "Are you sure?"
+msgstr "Você tem certeza?"
+
+#: apps/users.py:528
 msgid "Name is empty"
 msgstr "Nome em branco"
 
-#: apps/users.py:237
+#: apps/users.py:531
 msgid "User name too short."
 msgstr "Nome de usuário muito curto."
 
-#: apps/users.py:240
+#: apps/users.py:534
 msgid "User name contains invalid characters."
 msgstr "Nome de usuário contém caracteres inválidos."
 
-#: apps/users.py:248
+#: apps/users.py:542
 msgid "Email is empty"
 msgstr "Email em branco"
 
-#: apps/users.py:254 apps/users.py:371
+#: apps/users.py:548 apps/users.py:801
 msgid "Invalid email"
 msgstr "Email inválido"
 
-#: apps/users.py:259
-msgid "Password is empty"
-msgstr "Senha em branco"
-
-#: apps/users.py:266 apps/users.py:403
-msgid "The password must be at least 8 characters long."
-msgstr "Senha deve ter no mínimo 8 caracteres."
-
-#: apps/users.py:268 apps/users.py:406
-msgid "The password must have numbers."
-msgstr "Senha deve conter números."
-
-#: apps/users.py:270 apps/users.py:409
-msgid "The password must haver uppercase and lowercase letters."
-msgstr "Senha deve conter letras minúsculas e maiúsculas."
-
-#: apps/users.py:272 apps/users.py:412
-msgid "The password must have special symbols."
-msgstr "Senha deve conter caracteres especiais."
-
-#: apps/users.py:277 apps/users.py:422
-msgid "Passwords don't match."
-msgstr "Senhas não coincidem."
-
-#: apps/users.py:297
+#: apps/users.py:573
 msgid "Acount created!"
 msgstr "Conta de usuário criada!"
 
-#: apps/users.py:308
+#: apps/users.py:584
 msgid "Error creating account:"
 msgstr "Erro ao criar conta de usuário:"
 
-#: apps/users.py:347
-msgid "Name too short."
-msgstr "Nome muito curto."
-
-#: apps/users.py:349
-msgid "Invalid characters."
-msgstr "Caracteres inválidos."
-
-#: apps/users.py:419
-msgid "Fill password field."
-msgstr "Preencha a senha."
-
-#: apps/users.py:456 apps/users.py:462
+#: apps/users.py:685 apps/users.py:691
 msgid "Created"
 msgstr "Criado"
 
-#: apps/users.py:457 apps/users.py:464
+#: apps/users.py:686 apps/users.py:693
 msgid "Modified"
 msgstr "Modificado"
+
+#: apps/users.py:735
+msgid "User successfully updated!"
+msgstr "Usuário atualizado com sucesso!"
+
+#: apps/users.py:740
+msgid "Error updating user: "
+msgstr "Erro ao criar conta de usuário."
+
+#: apps/users.py:761
+msgid "User successfully deleted!"
+msgstr "Usuário removido com sucesso!"
+
+#: apps/users.py:766
+msgid "Error deleting user: "
+msgstr "Erro ao criar conta de usuário."
+
+#: apps/users.py:777 apps/users.py:779
+msgid "Name not defined"
+msgstr "Nome não definido"
+
+#: apps/users.py:783 apps/users.py:806
+msgid "Name too short."
+msgstr "Nome muito curto."
+
+#: apps/users.py:785 apps/users.py:808
+msgid "Invalid characters."
+msgstr "Caracteres inválidos."
+
+#: apps/users.py:865
+msgid "Password is empty"
+msgstr "Senha em branco"
+
+#: apps/users.py:870 apps/users.py:907
+msgid "The password must be at least 8 characters long."
+msgstr "Senha deve ter no mínimo 8 caracteres."
+
+#: apps/users.py:872 apps/users.py:910
+msgid "The password must have numbers."
+msgstr "Senha deve conter números."
+
+#: apps/users.py:874 apps/users.py:913
+msgid "The password must haver uppercase and lowercase letters."
+msgstr "Senha deve conter letras minúsculas e maiúsculas."
+
+#: apps/users.py:876 apps/users.py:916
+msgid "The password must have special symbols."
+msgstr "Senha deve conter caracteres especiais."
+
+#: apps/users.py:880 apps/users.py:926
+msgid "Passwords don't match."
+msgstr "Senhas não coincidem."
+
+#: apps/users.py:882
+msgid "Passwords match."
+msgstr "Senhas coincidem."
+
+#: apps/users.py:923
+msgid "Fill password field."
+msgstr "Preencha a senha."
 
 #: apps/home.py:14
 msgid "Dashboard"
