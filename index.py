@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from dash.dependencies import Input, Output, State
 from werkzeug.security import check_password_hash
 from os import path
-from app import server, app, login_manager, db, config, DWO
+from app import _, server, app, login_manager, db, config, DWO
 from apps import base, login
 
 alerts=[]
@@ -63,7 +63,7 @@ def authentication(n_clicks, email, password):
 
     if not email:
         login.alerts.append(
-            dbc.Alert('Email required!',
+            dbc.Alert(_('Email required!'),
                       color='danger',
                       dismissable=True,
                       className='my-1',
@@ -72,7 +72,7 @@ def authentication(n_clicks, email, password):
 
     if not password:
         login.alerts.append(
-            dbc.Alert('Password required!',
+            dbc.Alert(_('Password required!'),
                       color='danger',
                       dismissable=True,
                       className='my-1',
@@ -90,7 +90,7 @@ def authentication(n_clicks, email, password):
                 login_user(user, remember=True)
             else:
                 login.alerts.append(
-                    dbc.Alert('Incorrect Password, try again!',
+                    dbc.Alert(_('Incorrect Password, try again!'),
                               color='danger',
                               dismissable=True,
                               className='my-1',
@@ -98,7 +98,7 @@ def authentication(n_clicks, email, password):
                 )
         else:
             login.alerts.append(
-                dbc.Alert('User not found!',
+                dbc.Alert(_('User not found!'),
                           color='danger',
                           dismissable=True,
                           className='my-1',
@@ -129,7 +129,7 @@ if __name__ == '__main__':
             print('Data Warehouse DB connection succeed!')
     except Exception as e:
         alerts.append(
-            {'message':'Data Warehouse unreachable!', 'type':'danger'}
+            {'message':_('Data Warehouse unreachable!'), 'type':'danger'}
         )
 
     # Print Server version

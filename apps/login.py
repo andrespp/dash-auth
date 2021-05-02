@@ -4,7 +4,7 @@ import dash
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-from app import app
+from app import _, app
 
 alerts=[]
 
@@ -17,19 +17,19 @@ def layout():
     login_form = [
 
         dbc.FormGroup([
-            dbc.Label('Email', html_for='email'),
-            dbc.Input(type='email', id='email', placeholder='Enter email'),
+            dbc.Label(_('Email'), html_for='email'),
+            dbc.Input(type='email', id='email', placeholder=_('Enter email')),
         ]),
 
         dbc.FormGroup([
-            dbc.Label('Password', html_for='password'),
+            dbc.Label(_('Password'), html_for='password'),
             dbc.Input(type='password',
                       id='password',
-                      placeholder='Enter password'
+                      placeholder=_('Enter password'),
                      ),
         ]),
 
-        dbc.Button('Login',
+        dbc.Button(_('Login'),
                    id='login-button',
                    type='submit',
                    color='secondary',
@@ -52,7 +52,7 @@ def layout():
             # Header
             dbc.Row([
                 dbc.Col([
-                    html.H3('Login Page'),
+                    html.H3(_('Login Page')),
                 ],
                     width=6,
                     className='text-center',

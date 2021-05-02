@@ -1,0 +1,243 @@
+# DASH-AUTH PT-BR TRANSLATION.
+# Copyright (C) 2021
+# This file is distributed under the same license as the dash-auth package.
+# Andre Pereria, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-05-01 15:49-0300\n"
+"PO-Revision-Date: 2021-05-02 09:56-0300\n"
+"Last-Translator: Andre Pereira\n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: index.py:66
+msgid "Email required!"
+msgstr "Email em branco!"
+
+#: index.py:75
+msgid "Password required!"
+msgstr "Senha em branco!"
+
+#: index.py:93
+msgid "Incorrect Password, try again!"
+msgstr "Senha incorreta, tente novamente!"
+
+#: index.py:101
+msgid "User not found!"
+msgstr "Usuário não encontrado!"
+
+#: index.py:132
+msgid "Data Warehouse unreachable!"
+msgstr "Data Warehouse indisponível!"
+
+#: apps/users.py:30
+msgid "Active"
+msgstr "Ativo"
+
+#: apps/users.py:36
+msgid "Name"
+msgstr "Nome"
+
+#: apps/users.py:38
+msgid "First and Last Name"
+msgstr "Primeiro e último nome"
+
+#: apps/users.py:42 apps/login.py:20
+msgid "Email"
+msgstr "Email"
+
+#: apps/users.py:43 apps/login.py:21
+msgid "Enter email"
+msgstr "Inserir email"
+
+#: apps/users.py:47 apps/login.py:25
+msgid "Password"
+msgstr "Senha"
+
+#: apps/users.py:50 apps/login.py:28
+msgid "Enter password"
+msgstr "Inserir senha"
+
+#: apps/users.py:55
+msgid "Password (Confirm)"
+msgstr "Senha (confirmação)"
+
+#: apps/users.py:58
+msgid "Confirm password"
+msgstr "Confirmar Senha"
+
+#: apps/users.py:68
+msgid "Add user"
+msgstr "Adicionar Usuário"
+
+#: apps/users.py:71
+msgid "Close"
+msgstr "Fechar"
+
+#: apps/users.py:72
+msgid "Clear Fields"
+msgstr "Limpar Campos"
+
+#: apps/users.py:74
+msgid "Create new user"
+msgstr "Criar novo usuário"
+
+#: apps/users.py:93
+msgid "System Users"
+msgstr "Usuários do sistema"
+
+#: apps/users.py:100
+msgid "Add User"
+msgstr "Adicionar Usuário"
+
+#: apps/users.py:221
+msgid "Name is empty"
+msgstr "Nome em branco"
+
+#: apps/users.py:224
+msgid "User name too short."
+msgstr "Nome de usuário muito curto."
+
+#: apps/users.py:227
+msgid "User name contains invalid characters."
+msgstr "Nome de usuário contém caracteres inválidos."
+
+#: apps/users.py:235
+msgid "Email is empty"
+msgstr "Email em branco"
+
+#: apps/users.py:241 apps/users.py:338
+msgid "Invalid email"
+msgstr "Email inválido"
+
+#: apps/users.py:246
+msgid "Password is empty"
+msgstr "Senha em branco"
+
+#: apps/users.py:253 apps/users.py:370
+msgid "The password must be at least 8 characters long."
+msgstr "Senha deve ter no mínimo 8 caracteres."
+
+#: apps/users.py:255 apps/users.py:373
+msgid "The password must have numbers."
+msgstr "Senha deve conter números."
+
+#: apps/users.py:257 apps/users.py:376
+msgid "The password must haver uppercase and lowercase letters."
+msgstr "Senha deve conter letras minúsculas e maiúsculas."
+
+#: apps/users.py:259 apps/users.py:379
+msgid "The password must have special symbols."
+msgstr "Senha deve conter caracteres especiais."
+
+#: apps/users.py:264 apps/users.py:389
+msgid "Passwords don't match."
+msgstr "Senhas não coincidem."
+
+#: apps/users.py:284
+msgid "Acount created!"
+msgstr "Conta de usuário criada!"
+
+#: apps/users.py:295
+msgid "Error creating account:"
+msgstr "Erro ao criar conta de usuário:"
+
+#: apps/users.py:314
+msgid "Name too short."
+msgstr "Nome muito curto."
+
+#: apps/users.py:316
+msgid "Invalid characters."
+msgstr "Caracteres inválidos."
+
+#: apps/users.py:386
+msgid "Fill password field."
+msgstr "Preencha a senha."
+
+#: apps/users.py:420
+msgid "uid"
+msgstr "UID"
+
+#: apps/users.py:421
+msgid "name"
+msgstr "Nome"
+
+#: apps/users.py:422
+msgid "email"
+msgstr "Email"
+
+#: apps/users.py:423
+msgid "created"
+msgstr "Criado"
+
+#: apps/users.py:424
+msgid "modified"
+msgstr "Modificado"
+
+#: apps/users.py:425
+msgid "active"
+msgstr "Ativo"
+
+#: apps/home.py:14
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: apps/home.py:18
+msgid "Data Visualization and Business Inteligence tool."
+msgstr "Ferramenta de Visualização de Dados e Inteligência de Negócios."
+
+#: apps/base.py:62
+msgid "APPS"
+msgstr "APPS"
+
+#: apps/base.py:63
+msgid "Sales"
+msgstr "Vendas"
+
+#: apps/base.py:64
+msgid "Financial"
+msgstr "Finanças"
+
+#: apps/base.py:68
+msgid "Dashboards"
+msgstr "Dashboards"
+
+#: apps/base.py:74
+msgid "Users"
+msgstr "Usuários"
+
+#: apps/base.py:75
+msgid "Groups"
+msgstr "Grupos"
+
+#: apps/base.py:79
+msgid "Admin"
+msgstr "Admin"
+
+#: apps/base.py:83
+msgid "Logout"
+msgstr "Sair"
+
+#: apps/base.py:87
+msgid "Home"
+msgstr "Início"
+
+#: apps/base.py:154
+msgid "404 Page not found!"
+msgstr "404 Página não encontrada!"
+
+#: apps/login.py:32
+msgid "Login"
+msgstr "Login"
+
+#: apps/login.py:55
+msgid "Login Page"
+msgstr "Entre com a sua conta"

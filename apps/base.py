@@ -8,7 +8,7 @@ import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, Output, State
 from flask_login import current_user, logout_user
-from app import app, config, DWO
+from app import _, app, config, DWO
 from apps import home, users, sales, financial
 
 ###############################################################################
@@ -59,32 +59,32 @@ def layout(alerts=None):
             # Dashboards Dropdown
             dbc.DropdownMenu(
                 children=[
-                    dbc.DropdownMenuItem('APPS', header=True),
-                    dbc.DropdownMenuItem('Sales', href='/sales'),
-                    dbc.DropdownMenuItem('Financial', href='/financial'),
+                    dbc.DropdownMenuItem(_('APPS'), header=True),
+                    dbc.DropdownMenuItem(_('Sales'), href='/sales'),
+                    dbc.DropdownMenuItem(_('Financial'), href='/financial'),
                 ],
                 nav=True,
                 in_navbar=True,
-                label='Dashboards',
+                label=_('Dashboards'),
             ),
 
             # Dashboards Dropdown
             dbc.DropdownMenu(
                 children=[
-                    dbc.DropdownMenuItem('Users', href='/users'),
-                    dbc.DropdownMenuItem('Groups', href='/groups'),
+                    dbc.DropdownMenuItem(_('Users'), href='/users'),
+                    dbc.DropdownMenuItem(_('Groups'), href='/groups'),
                 ],
                 nav=True,
                 in_navbar=True,
-                label='Admin',
+                label=_('Admin'),
             ),
 
             # Logout button
-            dbc.NavLink('Logout', href='/logout'),
+            dbc.NavLink(_('Logout'), href='/logout'),
 
         ],
 
-        brand = 'Home',
+        brand = _('Home'),
         brand_href='/',
         className='p-0',
     )
@@ -151,5 +151,5 @@ def display_dashboard(pathname):
         elif pathname =='/financial':
             return financial.layout()
         else:
-            return html.Div([html.P('404 Page not found!')])
+            return html.Div([html.P(_('404 Page not found!'))])
 

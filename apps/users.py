@@ -11,7 +11,7 @@ import traceback
 from sqlalchemy.exc import IntegrityError
 from dash.dependencies import Input, Output, State
 from werkzeug.security import generate_password_hash
-from app import app, db, DWO
+from app import _, app, db, DWO
 from models import User
 
 ###############################################################################
@@ -27,35 +27,35 @@ def layout():
 
         dbc.FormGroup([
             dbc.Checklist(id='user-options',
-                          options=[{'label':'Active', 'value':'active'}],
+                          options=[{'label':_('Active'), 'value':'active'}],
                           value=['active'],
                          ),
         ]),
 
         dbc.FormGroup([
-            dbc.Label('Name', html_for='name'),
+            dbc.Label(_('Name'), html_for='name'),
             dbc.Input(type='text', id='name',
-                      placeholder='First and Last Name'),
+                      placeholder=_('First and Last Name')),
         ]),
 
         dbc.FormGroup([
-            dbc.Label('Email', html_for='signup-email'),
-            dbc.Input(type='email', id='email', placeholder='Enter email'),
+            dbc.Label(_('Email'), html_for='signup-email'),
+            dbc.Input(type='email', id='email', placeholder=_('Enter email')),
         ]),
 
         dbc.FormGroup([
-            dbc.Label('Password', html_for='password1'),
+            dbc.Label(_('Password'), html_for='password1'),
             dbc.Input(type='password',
                       id='password1',
-                      placeholder='Enter password'
+                      placeholder=_('Enter password'),
                      ),
         ]),
 
         dbc.FormGroup([
-            dbc.Label('Password (Confirm)', html_for='password2'),
+            dbc.Label(_('Password (Confirm)'), html_for='password2'),
             dbc.Input(type='password',
                       id='password2',
-                      placeholder='Confirm password'
+                      placeholder=_('Confirm password'),
                      ),
         ]),
 
@@ -65,13 +65,13 @@ def layout():
         [
             dbc.Modal(
                 [
-                    dbc.ModalHeader(['Add user', ]),
+                    dbc.ModalHeader([_('Add user'), ]),
                     dbc.ModalBody(signup_form),
                     dbc.ModalFooter([
-                        dbc.Button('Close', id='close', className='ml-auto'),
-                        dbc.Button('Clear Fields', id='clear',
+                        dbc.Button(_('Close'), id='close', className='ml-auto'),
+                        dbc.Button(_('Clear Fields'), id='clear',
                                    className='ml-1'),
-                        dbc.Button('Create new user',
+                        dbc.Button(_('Create new user'),
                                    id='signup-button',
                                    color='primary',
                                    className='ml-1'
@@ -90,14 +90,14 @@ def layout():
         # Title Row
         dbc.Row([
 
-            dbc.Col(html.H5('System Users',
+            dbc.Col(html.H5(_('System Users'),
                            className='py-3 m-0 text-left'
                           ),
                     width={'size':4, 'offset':0},
                     className='px-3',
             ),
 
-            dbc.Col(dbc.Button('Add User',
+            dbc.Col(dbc.Button(_('Add User'),
                                id='open',
                                color='secondary',
                                size='sm',
@@ -218,13 +218,13 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
 
     # Check Name
     if not name:
-        return dbc.Alert('Name is empty',
+        return dbc.Alert(_('Name is empty'),
                          dismissable=True, color='danger'), name, email, p1, p2
     elif len(name.strip()) < 3:
-        return dbc.Alert('User name too short.',
+        return dbc.Alert(_('User name too short.'),
                          dismissable=True, color='danger'), name, email, p1, p2
     elif not name.replace(" ", "").isalpha():
-        return dbc.Alert('User name contains invalid characters.',
+        return dbc.Alert(_('User name contains invalid characters.'),
                          dismissable=True, color='danger'), name, email, p1, p2
     else:
         user['name'] = name.strip()
@@ -232,36 +232,36 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
     # Check email
     pattern = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
     if not email:
-        return dbc.Alert('Email is empty',
+        return dbc.Alert(_('Email is empty'),
                          dismissable=True, color='danger'), name, email, p1, p2
 
     elif re.match(pattern, email):
         user['email'] = email
     else:
-        return dbc.Alert('Invalid email',
+        return dbc.Alert(_('Invalid email'),
                          dismissable=True, color='danger'), name, email, p1, p2
 
     # Check password
     if not p1:
-        return dbc.Alert('Password is empty',
+        return dbc.Alert(_('Password is empty'),
                          dismissable=True,
                          color='danger'), name, email, None, None
 
     pwd_check = password_check(p1)
     if not pwd_check['ok']:
         if pwd_check['length_error']:
-            msg = 'The password must be at least 8 characters long.'
+            msg = _('The password must be at least 8 characters long.')
         elif pwd_check['digit_error']:
-            msg = 'The password must have numbers.'
+            msg = _('The password must have numbers.')
         elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
-            msg = 'The password must haver uppercase and lowercase letters.'
+            msg = _('The password must haver uppercase and lowercase letters.')
         elif pwd_check['symbol_error']:
-            msg = 'The password must have special symbols.'
+            msg = _('The password must have special symbols.')
 
         return dbc.Alert(msg, dismissable=True,
                          color='danger'), name, email, None, None
     elif not p1==p2:
-        return dbc.Alert('Passwords don\'t match.',
+        return dbc.Alert(_('Passwords don\'t match.'),
                          dismissable=True,
                          color='danger'), name, email, None, None
     else:
@@ -281,18 +281,18 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
         db.create_all()
         db.session.add(usr)
         db.session.commit()
-        return dbc.Alert('Acount created!',
+        return dbc.Alert(_('Acount created!'),
                          dismissable=True,
                          color='success'), None, None, None, None
     except IntegrityError:
         db.session.rollback()
         return dbc.Alert(
-            f'Error creating account! User already exists',
+            f_('Error creating account! User already exists'),
             dismissable=True, color='danger'), name, email, None, None
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        return dbc.Alert(f'Error creating account: {e}',
+        return dbc.Alert(_('Error creating account:') + f' {e}',
                          dismissable=True, color='danger'), name, email, p1, p2
 
 @app.callback(
@@ -311,9 +311,9 @@ def validate_signup_name(name):
     # Check Name
     name = name.strip()
     if len(name) < 3:
-        return True, 'Name too short.'
+        return True, _('Name too short.')
     elif not name.replace(" ", "").isalpha():
-        return True, 'Invalid characters.'
+        return True, _('Invalid characters.')
     else:
         return False, None
 
@@ -335,7 +335,7 @@ def validate_signup_email(email):
     if(re.match(pattern, email)):
         return False, None
     else:
-        return True, 'Invalid email'
+        return True, _('Invalid email')
 
 @app.callback(
     Output('password1', 'invalid'),
@@ -366,24 +366,27 @@ def validate_signup_password(p1, p2, is_open, btn, sp1, sp2):
         if not pwd_check['ok']:
             invalid['p1'] = True
             if pwd_check['length_error']:
-                title['p1']='The password must be at least 8 characters long.'
+                title['p1']= _(
+                    'The password must be at least 8 characters long.'
+                )
             elif pwd_check['digit_error']:
-                title['p1'] = 'The password must have numbers.'
+                title['p1'] = _('The password must have numbers.')
             elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
-                title['p1'] = \
+                title['p1'] = _(
                     'The password must haver uppercase and lowercase letters.'
+                )
             elif pwd_check['symbol_error']:
-                title['p1'] = 'The password must have special symbols.'
+                title['p1'] = _('The password must have special symbols.')
         else:
             invalid['p1'] = False
 
     if p2:
         if not p1:
             invalid['p2'] = True
-            title['p2'] = 'Fill password field.'
+            title['p2'] = _('Fill password field.')
         elif not p1==p2:
             invalid['p2'] = True
-            title['p2'] = 'Passwords don\'t match.'
+            title['p2'] = _('Passwords don\'t match.')
         else:
             invalid['p2'] = False
 
@@ -414,20 +417,20 @@ def lookup_data():
         active.append(i.active)
 
     df = pd.DataFrame(
-        {'uid':uid,
-         'name':user,
-         'email':email,
-         'created':created,
-         'modified':modified,
-         'active':active,
+        {_('uid'):uid,
+         _('name'):user,
+         _('email'):email,
+         _('created'):created,
+         _('modified'):modified,
+         _('active'):active,
         }
     )
 
-    df['created'] = df['created'].apply(
+    df[_('created')] = df[_('created')].apply(
         lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
-    df['modified'] = df['modified'].apply(
+    df[_('modified')] = df[_('modified')].apply(
         lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
-    df['active'] = df['active'].apply(lambda x: 'X' if x else None)
+    df[_('active')] = df[_('active')].apply(lambda x: 'X' if x else None)
 
     return df
 
@@ -458,10 +461,17 @@ def password_check(password):
     lowercase_error = re.search(r"[a-z]", password) is None
 
     # searching for symbols
-    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
+    symbol_error = re.search(
+        r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password
+    ) is None
 
     # overall result
-    password_ok = not ( length_error or digit_error or uppercase_error or lowercase_error or symbol_error )
+    password_ok = not (length_error or
+                       digit_error or
+                       uppercase_error or
+                       lowercase_error or
+                       symbol_error
+                      )
 
     return {
         'ok' : password_ok,

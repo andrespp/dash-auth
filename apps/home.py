@@ -3,6 +3,7 @@
 import dash
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+from app import _
 
 layout = dbc.Row([
 
@@ -10,11 +11,11 @@ layout = dbc.Row([
 
         dbc.Jumbotron([
 
-            html.H3('Dashboard', className='display-3'),
+            html.H3(_('Dashboard'), className='display-3'),
 
             html.Hr(className='my-2'),
 
-            html.P('Data Visualization and Business Inteligence tool.',
+            html.P(_('Data Visualization and Business Inteligence tool.'),
                    className='lead',
                   ),
 

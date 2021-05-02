@@ -5,12 +5,14 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import configparser
 import flask
+import gettext
 import locale
-import os.path
 import models
+import os.path
 import uetl
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+_ = gettext.gettext
 
 ## Settings
 CONFIG_FILE = 'config.ini'
@@ -28,6 +30,13 @@ except:
 
 # Set locale
 locale.setlocale(locale.LC_MONETARY, config['SITE']['LANG'])
+
+if config['SITE']['LANG'].split('.')[0]=='pt_BR':
+    pt_br = gettext.translation('messages',
+                                localedir='locales',
+                                languages=['pt-br'])
+    pt_br.install()
+    _ = pt_br.gettext # Brazilian portuguese
 
 # Initialize Data Warehouse object
 DWO = uetl.DataWarehouse(name=config['DW']['NAME'],
