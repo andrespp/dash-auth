@@ -1,5 +1,6 @@
 """users.py
 """
+import ast
 import re
 import pandas as pd
 import dash
@@ -83,19 +84,6 @@ def layout():
             ),
         ]
     )
-    # user edit modal
-    user_edit_modal = html.Div(
-        [
-            dbc.Modal(
-                [
-                    dbc.ModalHeader([_('Edit User')]),
-                    dbc.ModalBody(),
-                ],
-                is_open=False,
-                id='user-edit-modal',
-            )
-        ]
-    )
 
     # Page Layout
     layout = [
@@ -134,11 +122,85 @@ def layout():
 
         # Modal Row
         dbc.Row(modal),
-        dbc.Row(user_edit_modal),
+        dbc.Row(get_user_edit_modal()),
 
     ]
 
     return layout
+
+def get_user_edit_modal():
+    """User edit modal
+    """
+    # user edit modal
+    user_edit_form = [
+
+        html.Div(id='user-edit-alert'),
+
+        dbc.FormGroup([
+            dbc.Checklist(id='user-options-edit',
+                          options=[{'label':_('Active'), 'value':'active'}],
+                          value=[],
+                         ),
+        ]),
+
+        dbc.FormGroup([
+            dbc.Label(_('Name'), html_for='name-edit'),
+            dbc.Input(type='text', id='name-edit',
+                      placeholder=_('First and Last Name')),
+        ]),
+
+        dbc.FormGroup([
+            dbc.Label(_('Email'), html_for='email-edit'),
+            dbc.Input(type='email',
+                      placeholder=_('Enter email'),
+                      disabled=True,
+                      id='email-edit',
+                     ),
+        ]),
+
+        dbc.FormGroup([
+            dbc.Label(_('Password'), html_for='password1-edit'),
+            dbc.Input(type='password',
+                      id='password1-edit',
+                      placeholder=_('Enter password'),
+                     ),
+        ]),
+
+        dbc.FormGroup([
+            dbc.Label(_('Password (Confirm)'), html_for='password2-edit'),
+            dbc.Input(type='password',
+                      id='password2-edit',
+                      placeholder=_('Confirm password'),
+                     ),
+        ]),
+
+    ]
+
+    return html.Div(
+        [
+            dbc.Modal(
+                [
+                    dbc.ModalHeader([_('Edit User')]),
+                    dbc.ModalBody(user_edit_form),
+                    dbc.ModalFooter([
+                        dbc.Button(_('Close'),
+                                   className='ml-auto',
+                                   size='sm',
+                                   id='close-edit',
+                                  ),
+                        dbc.Button(_('Save'),
+                                   id='save-edit',
+                                   color='primary',
+                                   size='sm',
+                                   className='ml-1',
+                                  ),
+                    ]),
+                ],
+                is_open=False,
+                id='user-edit-modal',
+            )
+        ]
+    )
 
 ###############################################################################
 # Callbacks
@@ -184,9 +246,9 @@ def update_table1(is_open):
 
 @app.callback(
     Output('modal', 'is_open'),
-     Input('open', 'n_clicks'),
-     Input('close', 'n_clicks'),
-     State('modal', 'is_open'),
+    Input('open', 'n_clicks'),
+    Input('close', 'n_clicks'),
+    State('modal', 'is_open'),
 )
 def toggle_modal(n1, n2, is_open):
     """toggle_modal()
@@ -194,6 +256,66 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+@app.callback(
+    Output('user-edit-modal','is_open'),
+    Input({'type':'update-user', 'index':ALL}, 'n_clicks'),
+    Input('close-edit', 'n_clicks'),
+    State('user-edit-modal', 'is_open'),
+)
+def toggle_user_edit_modal(edit_btn, close_btn, is_open):
+
+    # Identify callback context
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return False
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id=='close-edit':
+        return False
+
+    elif all([i == None for i in edit_btn]): # list is all None
+        return False
+    else:
+        return True
+
+@app.callback(
+    Output('user-options-edit','value'),
+    Output('name-edit','value'),
+    Output('email-edit','value'),
+    Input({'type':'update-user', 'index':ALL}, 'n_clicks'),
+)
+def user_edit_btn(edit_btn):
+
+    r = { 'name':None, 'email':None, 'options':[] }
+
+    # Wasn't called by any edit button
+    if all([i == None for i in edit_btn]): # list is all None
+        return r['options'], r['name'], r['email']
+
+    # Identify callback context
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return r['options'], r['name'], r['email']
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        button_id = ast.literal_eval(button_id)
+        uid = button_id['index']
+
+    # Lookup user
+    df = lookup_data()
+    user = df[df[_('UID')]==uid]
+
+    if len(user) == 1:
+        user = user.iloc[0].to_dict()
+        if user[_('Active')]:
+            r['options'] = ['active']
+
+        return  r['options'], user[_('Name')], user[_('Email')]
+
+    else:
+        return r['options'], r['name'], r['email']
 
 @app.callback(
     Output('signup-alert','children'),
@@ -307,26 +429,6 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
         traceback.print_exc()
         return dbc.Alert(_('Error creating account:') + f' {e}',
                          dismissable=True, color='danger'), name, email, p1, p2
-
-@app.callback(
-    Output('user-edit-modal','is_open'),
-    Input({'type':'update-user', 'index':ALL}, 'n_clicks'),
-)
-def update_user_btn(n_clicks):
-
-    ctx = dash.callback_context
-
-    if not ctx.triggered:
-        return False
-    else:
-        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        print(button_id)   
-
-    if all([i == None for i in n_clicks]): # list is all None
-        return False
-    else:
-        return True
-
 
 @app.callback(
     Output('name', 'invalid'),
