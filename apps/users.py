@@ -21,6 +21,52 @@ from models import User
 def layout():
     """Define dashboard layout
     """
+    # Page Layout
+    layout = [
+
+        # Title Row
+        dbc.Row([
+
+            dbc.Col(html.H5(_('System Users'),
+                           className='py-3 m-0 text-left'
+                          ),
+                    width={'size':4, 'offset':0},
+                    className='px-3',
+            ),
+
+            dbc.Col(dbc.Button([_('Add User'),
+                                html.I(className="fa fa-user-plus ml-2")
+                               ],
+                               id='open',
+                               color='secondary',
+                               size='sm',
+                               className='m-0 float-right',
+                              ),
+                    width={'size':4, 'offset':0},
+                    className='py-3',
+                   ),
+        ],
+            justify='between',
+        ),
+
+        # Graph Row
+        dbc.Row([
+            dbc.Col(
+                html.Div(id='table1'),
+            ),
+        ]),
+
+        # Modal Row
+        dbc.Row(get_signup_modal()),
+        dbc.Row(get_user_edit_modal()),
+
+    ]
+
+    return layout
+
+def get_signup_modal():
+    """User signup modal
+    """
     # New user Form
     signup_form = [
 
@@ -62,7 +108,7 @@ def layout():
 
     ]
     # modal
-    modal = html.Div(
+    return html.Div(
         [
             dbc.Modal(
                 [
@@ -85,48 +131,6 @@ def layout():
         ]
     )
 
-    # Page Layout
-    layout = [
-
-        # Title Row
-        dbc.Row([
-
-            dbc.Col(html.H5(_('System Users'),
-                           className='py-3 m-0 text-left'
-                          ),
-                    width={'size':4, 'offset':0},
-                    className='px-3',
-            ),
-
-            dbc.Col(dbc.Button([_('Add User'),
-                                html.I(className="fa fa-user-plus ml-2")
-                               ],
-                               id='open',
-                               color='secondary',
-                               size='sm',
-                               className='m-0 float-right',
-                              ),
-                    width={'size':4, 'offset':0},
-                    className='py-3',
-                   ),
-        ],
-            justify='between',
-        ),
-
-        # Graph Row
-        dbc.Row([
-            dbc.Col(
-                html.Div(id='table1'),
-            ),
-        ]),
-
-        # Modal Row
-        dbc.Row(modal),
-        dbc.Row(get_user_edit_modal()),
-
-    ]
-
-    return layout
 
 def get_user_edit_modal():
     """User edit modal
