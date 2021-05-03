@@ -40,7 +40,7 @@ def layout():
         ]),
 
         dbc.FormGroup([
-            dbc.Label(_('Email'), html_for='signup-email'),
+            dbc.Label(_('Email'), html_for='email'),
             dbc.Input(type='email', id='email', placeholder=_('Enter email')),
         ]),
 
