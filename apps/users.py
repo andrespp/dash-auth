@@ -147,6 +147,17 @@ def get_user_edit_modal():
                          ),
         ]),
 
+        dbc.FormGroup(
+            [
+            dbc.Label(_('UID'), html_for='uid-edit'),
+            dbc.Col(html.Div(id='uid-edit'),
+                width=10, className='align-middle',
+            ),
+            ],
+            row=True,
+            className='m-0',
+        ),
+
         dbc.FormGroup([
             dbc.Label(_('Name'), html_for='name-edit'),
             dbc.Input(type='text', id='name-edit',
@@ -268,6 +279,8 @@ def toggle_modal(n1, n2, is_open):
     State('user-edit-modal', 'is_open'),
 )
 def toggle_user_edit_modal(edit_btn, close_btn, is_open):
+    """toggle_user_edit_modal()
+    """
 
     # Identify callback context
     ctx = dash.callback_context
@@ -285,41 +298,85 @@ def toggle_user_edit_modal(edit_btn, close_btn, is_open):
         return True
 
 @app.callback(
+    Output('user-edit-alert','children'),
     Output('user-options-edit','value'),
     Output('name-edit','value'),
     Output('email-edit','value'),
+    Output('uid-edit','children'),
     Input({'type':'update-user', 'index':ALL}, 'n_clicks'),
+    Input('save-edit','n_clicks'),
+    Input('user-edit-modal','is_open'),
+    State('name-edit','value'),
+    State('email-edit','value'),
+    State('password1-edit','value'),
+    State('password2-edit','value'),
+    State('user-options-edit','value'),
+    State('uid-edit','children'),
 )
-def user_edit_btn(edit_btn):
+def user_edit_btn(edit_btn, save_btn, is_open, name, email, p1, p2, options,
+                  uid):
+    """user_edit_btn
+    """
 
-    r = { 'name':None, 'email':None, 'options':[] }
+    r = {'name':name, 'email':email, 'options':options,
+         'alert':None, 'uid':None
+        }
 
     # Wasn't called by any edit button
     if all([i == None for i in edit_btn]): # list is all None
-        return r['options'], r['name'], r['email']
+        return r['alert'], r['options'], r['name'], r['email'], r['uid']
 
-    # Identify callback context
+    # Identify which input fired the callback
     ctx = dash.callback_context
     if not ctx.triggered:
-        return r['options'], r['name'], r['email']
+        return r['alert'], r['options'], r['name'], r['email'], r['uid']
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        button_id = ast.literal_eval(button_id)
-        uid = button_id['index']
 
-    # Lookup user
-    df = lookup_data()
-    user = df[df[_('UID')]==uid]
+        # Save user edit
+        if button_id=='save-edit':
 
-    if len(user) == 1:
-        user = user.iloc[0].to_dict()
-        if user[_('Active')]:
-            r['options'] = ['active']
+            if 'active' in r['options']:
+                active=True
+            else:
+                active=False
 
-        return  r['options'], user[_('Name')], user[_('Email')]
+            if update_user(uid, name, email, p1, p2, active):
+                r['alert'] = dbc.Alert(_('User successfully updated!'),
+                                       dismissable=True,
+                                       color='success'
+                                      )
+            else:
+                r['alert'] = dbc.Alert(_('Error updating user!'),
+                                       dismissable=True,
+                                       color='danger'
+                                      )
+            return r['alert'], r['options'], r['name'], r['email'], r['uid']
 
-    else:
-        return r['options'], r['name'], r['email']
+        # Close modal
+        elif button_id=='user-edit-modal':
+            return r['alert'], r['options'], r['name'], r['email'], r['uid']
+
+        # User edit button
+        else:
+            button_id = ast.literal_eval(button_id)
+            uid = button_id['index']
+
+            # Fill user edit modal fields
+            df = lookup_data()
+            user = df[df[_('UID')]==uid]
+
+            if len(user) == 1:
+                user = user.iloc[0].to_dict()
+                if user[_('Active')]:
+                    r['options'] = ['active']
+
+                return r['alert'], r['options'], \
+                       user[_('Name')], user[_('Email')], uid
+
+            else:
+                return r['alert'], r['options'], r['name'], \
+                       r['email'], r['uid']
 
 @app.callback(
     Output('signup-alert','children'),
@@ -442,19 +499,20 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
 def validate_signup_name(name):
     """Validade signup form
     """
-
-    # blank cell is not invalid
-    if not name:
+    if not name: # blank cell is not invalid
         return False, None
-
-    # Check Name
-    name = name.strip()
-    if len(name) < 3:
-        return True, _('Name too short.')
-    elif not name.replace(" ", "").isalpha():
-        return True, _('Invalid characters.')
     else:
-        return False, None
+        return name_check(name)
+
+@app.callback(
+    Output('name-edit', 'invalid'),
+    Output('name-edit', 'title'),
+    Input('name-edit','value'),
+)
+def validate_edit_name(name):
+    """Validade edit form
+    """
+    return name_check(name)
 
 @app.callback(
     Output('email', 'invalid'),
@@ -464,17 +522,10 @@ def validate_signup_name(name):
 def validate_signup_email(email):
     """Validade signup form
     """
-
-    # blank cell is not invalid
-    if not email:
-        return False, None
-
-    # Check email
-    pattern = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-    if(re.match(pattern, email)):
+    if not email: # blank cell is not invalid
         return False, None
     else:
-        return True, _('Invalid email')
+        return email_check(email)
 
 @app.callback(
     Output('password1', 'invalid'),
@@ -491,45 +542,24 @@ def validate_signup_email(email):
 def validate_signup_password(p1, p2, is_open, btn, sp1, sp2):
     """Validade signup form
     """
-    invalid = {'p1':sp1, 'p2':sp2}
-    title = {'p1':None, 'p2':None}
+    return validate_password_form(p1, p2, is_open, btn, sp1, sp2)
 
-    ctx = dash.callback_context
-    if ctx.triggered:
-        btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btn_id == 'modal' or btn_id == 'clear':
-            return False, False, None, None
-
-    if p1:
-        pwd_check = password_check(p1)
-        if not pwd_check['ok']:
-            invalid['p1'] = True
-            if pwd_check['length_error']:
-                title['p1']= _(
-                    'The password must be at least 8 characters long.'
-                )
-            elif pwd_check['digit_error']:
-                title['p1'] = _('The password must have numbers.')
-            elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
-                title['p1'] = _(
-                    'The password must haver uppercase and lowercase letters.'
-                )
-            elif pwd_check['symbol_error']:
-                title['p1'] = _('The password must have special symbols.')
-        else:
-            invalid['p1'] = False
-
-    if p2:
-        if not p1:
-            invalid['p2'] = True
-            title['p2'] = _('Fill password field.')
-        elif not p1==p2:
-            invalid['p2'] = True
-            title['p2'] = _('Passwords don\'t match.')
-        else:
-            invalid['p2'] = False
-
-    return invalid['p1'], invalid['p2'], title['p1'], title['p2']
+@app.callback(
+    Output('password1-edit', 'invalid'),
+    Output('password2-edit', 'invalid'),
+    Output('password1-edit', 'title'),
+    Output('password2-edit', 'title'),
+    Input('password1-edit','value'),
+    Input('password2-edit','value'),
+    Input('user-edit-modal','is_open'),
+    Input('save-edit','n_clicks'),
+    State('password1-edit','invalid'),
+    State('password2-edit','invalid'),
+)
+def validate_edit_password(p1, p2, is_open, btn, sp1, sp2):
+    """Validade signup form
+    """
+    return validate_password_form(p1, p2, is_open, btn, sp1, sp2)
 
 ###############################################################################
 # Data lookup functions
@@ -575,6 +605,70 @@ def lookup_data():
 
 ###############################################################################
 # Other functions
+def update_user(uid, name=None, email=None, p1=None, p2=None, active=None):
+    """Update user
+
+    Parameters
+    ----------
+        uid | int
+        name | string
+        email | string
+        p1 | string -> password
+        p2 | string -> password confirmation
+        active | bool
+
+    Returns
+    -------
+        True on successful update, False otherwise
+    """
+    #TODO implement
+    print(f'editing uid {uid}')
+    return False
+
+def name_check(name):
+    """
+    Verify if name is valid
+    Returns (status, message), where status is True if name is valid or False
+    otherwise, and message is a string with a message associated with
+    the check result
+    """
+    # Check Name
+    if not name:
+        return False, _('Name not defined')
+    elif len(name)==0:
+        return False, _('Name not defined')
+    else:
+        name = name.strip()
+        if len(name) < 3:
+            return True, _('Name too short.')
+        elif not name.replace(" ", "").isalpha():
+            return True, _('Invalid characters.')
+        else:
+            return False, None
+
+def email_check(email):
+    """
+    Verify if email is valid
+    Returns (status, message), where status is True if email is valid or False
+    otherwise, and message is a string with a message associated with
+    the check result
+    """
+    # Check email
+    pattern = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+    if(re.match(pattern, email)):
+        return False, None
+    else:
+        return True, _('Invalid email')
+
+    # Check Name
+    name = name.strip()
+    if len(name) < 3:
+        return True, _('Name too short.')
+    elif not name.replace(" ", "").isalpha():
+        return True, _('Invalid characters.')
+    else:
+        return False, None
+
 def password_check(password):
     """
     Verify the strength of 'password'
@@ -620,3 +714,51 @@ def password_check(password):
         'lowercase_error' : lowercase_error,
         'symbol_error' : symbol_error,
     }
+
+def validate_password_form(p1, p2, is_open, btn, sp1, sp2):
+    """Validade password form
+    Returns
+        Output('password1', 'invalid'),
+        Output('password2', 'invalid'),
+        Output('password1', 'title'),
+        Output('password2', 'title'),
+    """
+    invalid = {'p1':sp1, 'p2':sp2}
+    title = {'p1':None, 'p2':None}
+
+    ctx = dash.callback_context
+    if ctx.triggered:
+        btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        if btn_id == 'modal' or btn_id == 'clear':
+            return False, False, None, None
+
+    if p1:
+        pwd_check = password_check(p1)
+        if not pwd_check['ok']:
+            invalid['p1'] = True
+            if pwd_check['length_error']:
+                title['p1']= _(
+                    'The password must be at least 8 characters long.'
+                )
+            elif pwd_check['digit_error']:
+                title['p1'] = _('The password must have numbers.')
+            elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
+                title['p1'] = _(
+                    'The password must haver uppercase and lowercase letters.'
+                )
+            elif pwd_check['symbol_error']:
+                title['p1'] = _('The password must have special symbols.')
+        else:
+            invalid['p1'] = False
+
+    if p2:
+        if not p1:
+            invalid['p2'] = True
+            title['p2'] = _('Fill password field.')
+        elif not p1==p2:
+            invalid['p2'] = True
+            title['p2'] = _('Passwords don\'t match.')
+        else:
+            invalid['p2'] = False
+
+    return invalid['p1'], invalid['p2'], title['p1'], title['p2']
