@@ -59,6 +59,7 @@ def layout():
         # Modal Row
         dbc.Row(get_signup_modal()),
         dbc.Row(get_user_edit_modal()),
+        dbc.Row(get_user_remove_modal()),
 
     ]
 
@@ -217,14 +218,50 @@ def get_user_edit_modal():
         ]
     )
 
+def get_user_remove_modal():
+    """User remove modal
+    """
+
+    return html.Div(
+        [
+            html.Div(id='uid-remove', style={'display': 'none'}),
+
+            dbc.Modal(
+                [
+                    dbc.ModalHeader([_('Remove User'),]),
+                    dbc.ModalBody([
+                        html.Div(id='user-remove-alert'),
+                        html.P(id='user-remove-message')
+                    ]),
+                    dbc.ModalFooter([
+                        dbc.Button(_('No'),
+                                   className='ml-auto',
+                                   size='sm',
+                                   id='close-remove',
+                                  ),
+                        dbc.Button(_('Yes!'),
+                                   id='save-remove',
+                                   color='danger',
+                                   size='sm',
+                                   className='ml-1',
+                                  ),
+                    ]),
+                ],
+                is_open=False,
+                id='user-remove-modal',
+            )
+        ]
+    )
+
 ###############################################################################
 # Callbacks
 @app.callback(
     Output('table1', 'children'),
     Input('modal','is_open'),
     Input('user-edit-modal', 'is_open'),
+    State('user-remove-alert','children'),
 )
-def update_table1(user_add_modal, user_edit_modal):
+def update_table1(user_add_modal, user_edit_modal, user_remove):
     """update_table
     """
     df = lookup_data()
@@ -247,6 +284,7 @@ def update_table1(user_add_modal, user_edit_modal):
         dbc.Button(
             html.I(className="fa fa-trash-alt"),
             color='light', size='sm',
+            id={'type':'remove-user', 'index':x},
         )
     )
 
@@ -294,6 +332,31 @@ def toggle_user_edit_modal(edit_btn, close_btn, is_open):
         return False
 
     elif all([i == None for i in edit_btn]): # list is all None
+        return False
+    else:
+        return True
+
+@app.callback(
+    Output('user-remove-modal','is_open'),
+    Input({'type':'remove-user', 'index':ALL}, 'n_clicks'),
+    Input('close-remove', 'n_clicks'),
+    State('user-remove-modal', 'is_open'),
+)
+def toggle_user_remove_modal(remove_btn, close_btn, is_open):
+    """toggle_user_remove_modal()
+    """
+
+    # Identify callback context
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return False
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id=='close-remove':
+        return False
+
+    elif all([i == None for i in remove_btn]): # list is all None
         return False
     else:
         return True
@@ -374,6 +437,56 @@ def user_edit_btn(edit_btn, save_btn, is_open, name, email, p1, p2, options,
             else:
                 return r['alert'], r['options'], r['name'], \
                        r['email'], r['uid']
+
+@app.callback(
+    Output('uid-remove','children'),
+    Output('user-remove-message','children'),
+    Output('user-remove-alert','children'),
+    Input({'type':'remove-user', 'index':ALL}, 'n_clicks'),
+    Input('save-remove','n_clicks'),
+    State('user-remove-modal','is_open'),
+    State('uid-remove','children'),
+    State('user-remove-message','value'),
+)
+def user_remove_btn(remove_btn, save_btn, is_open, uid, msg):
+    """user_remove_btn
+    """
+    alert = None
+
+    # Identify which input fired the callback
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return uid, msg, alert
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        # Wasn't called by any remove button nor save-remove button
+        if all([i == None for i in remove_btn]) and button_id != 'save-remove':
+            return uid, msg, alert
+
+        # Save user remove
+        if button_id=='save-remove':
+
+            # Perform user removal
+            user_removed, message = remove_user(uid)
+            if user_removed:
+                alert = dbc.Alert(message, dismissable=True, color='success')
+            else:
+                alert = dbc.Alert(message, dismissable=True, color='danger')
+
+            return uid, msg, alert
+
+        # Close modal
+        elif button_id=='user-remove-modal':
+            return uid, msg, alert
+
+        # User trash button
+        else:
+            button_id = ast.literal_eval(button_id)
+            uid = button_id['index']
+            msg = _('User') + f' {uid} ' + _('will be deleted.') + ' ' + \
+                    _('Are you sure?')
+            return uid, msg, alert
 
 @app.callback(
     Output('signup-alert','children'),
@@ -624,6 +737,32 @@ def update_user(uid, name=None, email=None, p1=None, p2=None, active=None):
         db.session.rollback()
         traceback.print_exc()
         return False, _('Error updating user: ') + f'{e}'
+
+def remove_user(uid):
+    """Remove user
+
+    Parameters
+    ----------
+        uid | int
+
+    Returns
+    -------
+        (status, message), where 'status' is True if the updtate operation
+        succeed, False otherwise, and 'message' is a string containing a
+        message associated with the operation result
+    """
+
+    # Update user
+    try:
+        user = User.query.filter_by(id=uid).first()
+        db.session.delete(user)
+        db.session.commit()
+        return True, _('User successfully deleted!')
+
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        return False, _('Error deleting user: ') + f'{e}'
 
 def name_check(name):
     """
