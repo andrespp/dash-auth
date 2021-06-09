@@ -258,10 +258,11 @@ def get_user_remove_modal():
 @app.callback(
     Output('table1', 'children'),
     Input('modal','is_open'),
-    Input('user-edit-modal', 'is_open'),
-    State('user-remove-alert','children'),
+    Input('signup-alert', 'children'),
+    Input('user-edit-alert', 'children'),
+    Input('user-remove-alert','children'),
 )
-def update_table1(user_add_modal, user_edit_modal, user_remove):
+def update_table1(is_open, signup, user_edit, user_remove):
     """update_table
     """
     df = lookup_data()
@@ -332,7 +333,7 @@ def toggle_user_edit_modal(edit_btn, close_btn, is_open):
         return False
 
     elif all([i == None for i in edit_btn]): # list is all None
-        return False
+        return is_open
     else:
         return True
 
@@ -357,7 +358,7 @@ def toggle_user_remove_modal(remove_btn, close_btn, is_open):
         return False
 
     elif all([i == None for i in remove_btn]): # list is all None
-        return False
+        return is_open
     else:
         return True
 
