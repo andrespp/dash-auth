@@ -222,8 +222,9 @@ def get_user_edit_modal():
 @app.callback(
     Output('table1', 'children'),
     Input('modal','is_open'),
+    Input('user-edit-modal', 'is_open'),
 )
-def update_table1(is_open):
+def update_table1(user_add_modal, user_edit_modal):
     """update_table
     """
     df = lookup_data()
@@ -322,16 +323,16 @@ def user_edit_btn(edit_btn, save_btn, is_open, name, email, p1, p2, options,
          'alert':None, 'uid':uid
         }
 
-    # Wasn't called by any edit button
-    if all([i == None for i in edit_btn]): # list is all None
-        return r['alert'], r['options'], r['name'], r['email'], r['uid']
-
     # Identify which input fired the callback
     ctx = dash.callback_context
     if not ctx.triggered:
         return r['alert'], r['options'], r['name'], r['email'], r['uid']
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        # Wasn't called by any edit button nor save-edit button
+        if all([i == None for i in edit_btn]) and button_id != 'save-edit':
+            return r['alert'], r['options'], r['name'], r['email'], r['uid']
 
         # Save user edit
         if button_id=='save-edit':
