@@ -84,7 +84,7 @@ def authentication(n_clicks, email, password):
 
     else:
         # Authenticate user
-        user = models.User.query.filter_by(email=email).first()
+        user = models.User.query.filter_by(email=email, active=True).first()
         if user:
             if check_password_hash(user.password, password):
                 login_user(user, remember=True)
