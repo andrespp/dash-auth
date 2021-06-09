@@ -319,7 +319,7 @@ def user_edit_btn(edit_btn, save_btn, is_open, name, email, p1, p2, options,
     """
 
     r = {'name':name, 'email':email, 'options':options,
-         'alert':None, 'uid':None
+         'alert':None, 'uid':uid
         }
 
     # Wasn't called by any edit button
@@ -341,16 +341,12 @@ def user_edit_btn(edit_btn, save_btn, is_open, name, email, p1, p2, options,
             else:
                 active=False
 
-            if update_user(uid, name, email, p1, p2, active):
-                r['alert'] = dbc.Alert(_('User successfully updated!'),
-                                       dismissable=True,
-                                       color='success'
-                                      )
+            user_updated, msg = update_user(uid, name, email, p1, p2, active)
+            if user_updated:
+                r['alert'] = dbc.Alert(msg, dismissable=True, color='success')
             else:
-                r['alert'] = dbc.Alert(_('Error updating user!'),
-                                       dismissable=True,
-                                       color='danger'
-                                      )
+                r['alert'] = dbc.Alert(msg, dismissable=True, color='danger')
+
             return r['alert'], r['options'], r['name'], r['email'], r['uid']
 
         # Close modal
@@ -444,7 +440,6 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
     else:
         return dbc.Alert(msg, dismissable=True,
                          color='danger'), name, email, None, None
-
 
     # Create user account / adduser / useradd
     try:
@@ -602,21 +597,31 @@ def update_user(uid, name=None, email=None, p1=None, p2=None, active=None):
 
     Returns
     -------
-        True on successful update, False otherwise
+        (status, message), where 'status' is True if the updtate operation
+        succeed, False otherwise, and 'message' is a string containing a
+        message associated with the operation result
     """
-    print(f'editing uid {uid}')
+
+    # Check password
+    if p1 or p2:
+        valid_password, msg = password_validation(p1, p2)
+        if not valid_password:
+            return False, msg
+
+    # Update user
     try:
         user = User.query.filter_by(id=uid).first()
         user.name = name
         user.active = active
-        #TODO implement
+        if p1:
+            user.password = generate_password_hash(p1, method='sha256')
         db.session.commit()
-        return True
+        return True, _('User successfully updated!')
 
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        return False
+        return False, _('Error updating user: ') + f'{e}'
 
 def name_check(name):
     """
