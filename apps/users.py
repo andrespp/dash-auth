@@ -577,7 +577,7 @@ def lookup_data():
     df[_('Created')] = df[_('Created')].apply(
         lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
     df[_('Modified')] = df[_('Modified')].apply(
-        lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if x else None)
+        lambda x: x.strftime('%Y-%m-%d, %H:%M %Z') if pd.notnull(x) else None)
     df[_('Active')] = df[_('Active')].apply(lambda x: 'X' if x else None)
 
     return df
@@ -614,6 +614,7 @@ def update_user(uid, name=None, email=None, p1=None, p2=None, active=None):
         user = User.query.filter_by(id=uid).first()
         user.name = name
         user.active = active
+        user.modified=dt.datetime.now()
         if p1:
             user.password = generate_password_hash(p1, method='sha256')
         db.session.commit()
