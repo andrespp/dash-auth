@@ -438,32 +438,15 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
                          dismissable=True, color='danger'), name, email, p1, p2
 
     # Check password
-    if not p1:
-        return dbc.Alert(_('Password is empty'),
-                         dismissable=True,
-                         color='danger'), name, email, None, None
-
-    pwd_check = password_check(p1)
-    if not pwd_check['ok']:
-        if pwd_check['length_error']:
-            msg = _('The password must be at least 8 characters long.')
-        elif pwd_check['digit_error']:
-            msg = _('The password must have numbers.')
-        elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
-            msg = _('The password must haver uppercase and lowercase letters.')
-        elif pwd_check['symbol_error']:
-            msg = _('The password must have special symbols.')
-
+    valid_password, msg = password_validation(p1, p2)
+    if valid_password:
+        user['password'] = p1
+    else:
         return dbc.Alert(msg, dismissable=True,
                          color='danger'), name, email, None, None
-    elif not p1==p2:
-        return dbc.Alert(_('Passwords don\'t match.'),
-                         dismissable=True,
-                         color='danger'), name, email, None, None
-    else:
-        user['password'] = p1
 
-    # Create account
+
+    # Create user account / adduser / useradd
     try:
         usr = User(email=user['email'],
                     name=user['name'],
@@ -621,9 +604,19 @@ def update_user(uid, name=None, email=None, p1=None, p2=None, active=None):
     -------
         True on successful update, False otherwise
     """
-    #TODO implement
     print(f'editing uid {uid}')
-    return False
+    try:
+        user = User.query.filter_by(id=uid).first()
+        user.name = name
+        user.active = active
+        #TODO implement
+        db.session.commit()
+        return True
+
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        return False
 
 def name_check(name):
     """
@@ -714,6 +707,32 @@ def password_check(password):
         'lowercase_error' : lowercase_error,
         'symbol_error' : symbol_error,
     }
+
+def password_validation(p1, p2):
+    """Validade passwords providaded in forms
+
+    Returns (a, b), where 'a' is True if validations was successful of False
+    otherwise, and 'b' a message associated with the validation.
+    """
+    if not p1:
+        return False, _('Password is empty')
+
+    pwd_check = password_check(p1)
+    if not pwd_check['ok']:
+        if pwd_check['length_error']:
+            msg = _('The password must be at least 8 characters long.')
+        elif pwd_check['digit_error']:
+            msg = _('The password must have numbers.')
+        elif pwd_check['uppercase_error'] or pwd_check['lowercase_error']:
+            msg = _('The password must haver uppercase and lowercase letters.')
+        elif pwd_check['symbol_error']:
+            msg = _('The password must have special symbols.')
+        return False, msg
+
+    elif not p1==p2:
+        return False, _('Passwords don\'t match.')
+    else:
+        return True, _('Passwords match.')
 
 def validate_password_form(p1, p2, is_open, btn, sp1, sp2):
     """Validade password form
