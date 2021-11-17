@@ -1,9 +1,8 @@
 import dash
 import dash_bootstrap_components as dbc
-import dash_core_components as dcc
-import dash_html_components as html
 import flask
 import models
+from dash import dcc, html
 from flask_login import login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from dash.dependencies import Input, Output, State

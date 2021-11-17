@@ -5,10 +5,9 @@ import re
 import pandas as pd
 import dash
 import dash_bootstrap_components as dbc
-import dash_html_components as html
-import dash_table
 import datetime as dt
 import traceback
+from dash import dcc, html, dash_table
 from sqlalchemy.exc import IntegrityError
 from dash.dependencies import Input, Output, State, ALL
 from werkzeug.security import generate_password_hash

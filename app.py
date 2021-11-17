@@ -1,7 +1,6 @@
 """app.py
 """
 import dash
-import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import configparser
 import flask
@@ -10,6 +9,7 @@ import locale
 import models
 import os.path
 import uetl
+from dash import dcc
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 _ = gettext.gettext
