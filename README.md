@@ -16,7 +16,7 @@ $ git clone https://github.com/andrespp/dash-auth.git
 
 ### App settings
 
-Adjust necessary `config.ini` file, if necessary.
+Adjust `config.ini` file, if necessary.
 
 ### Build environment
 
