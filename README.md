@@ -24,6 +24,25 @@ Adjust necessary `config.ini` file, if necessary.
 $ conda env create -f environment.yml
 ```
 
+### Select app language translation (optional)
+
+Edit `LANG` parameter on `config.ini` file.
+```ini
+...
+;LANG=en_US.UTF-8
+LANG=pt_BR.UTF-8
+...
+```
+
+Generate MO files.
+
+```bash
+ $ cd locales/pt-br/LC_MESSAGES/
+ $ msgfmt messages.po -o messages.mo
+ $ cd -
+```
+
+
 ### Run the app
 ```bash
 $ conda activate dash-auth
