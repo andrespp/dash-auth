@@ -5,7 +5,7 @@ channels:
   - defaults
 
 dependencies:
-  - python=3.8
+  - python=3.11
   - dash
   - dash-bootstrap-components<1
   - dash-core-components
@@ -21,4 +21,4 @@ dependencies:
   - xlsxwriter
   - pip:
     - odfpy
-    - uetl==0.0.6
+    - uetl==0.0.9

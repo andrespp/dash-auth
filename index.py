@@ -117,7 +117,8 @@ if __name__ == '__main__':
 
     # App DB Creation
     if not path.exists(config['APP']['DB_NAME']):
-        db.create_all(app=server)
+        with server.app_context():
+            db.create_all()
         print('Backend database created!')
     else:
         print('Backend database exists')
