@@ -72,39 +72,61 @@ def get_signup_modal():
 
         html.Div(id='signup-alert'),
 
-        dbc.FormGroup([
-            dbc.Checklist(id='user-options',
-                          options=[{'label':_('Active'), 'value':'active'}],
-                          value=['active'],
-                         ),
-        ]),
+        html.Div(
+            [
+                dbc.Checklist(
+                    id='user-options',
+                    options=[{'label':_('Active'), 'value':'active'}],
+                    value=['active'],
+                ),
+            ],
+            className="mb-3",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Name'), html_for='name'),
-            dbc.Input(type='text', id='name',
-                      placeholder=_('First and Last Name')),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Name'), html_for='name'),
+                dbc.Input(
+                    type='text', id='name',
+                    placeholder=_('First and Last Name')
+                ),
+            ],
+            className="mb-3",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Email'), html_for='email'),
-            dbc.Input(type='email', id='email', placeholder=_('Enter email')),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Email'), html_for='email'),
+                dbc.Input(
+                    type='email', id='email', placeholder=_('Enter email')
+                ),
+            ],
+            className="mb-3",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Password'), html_for='password1'),
-            dbc.Input(type='password',
-                      id='password1',
-                      placeholder=_('Enter password'),
-                     ),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Password'), html_for='password1'),
+                dbc.Input(
+                    type='password',
+                    id='password1',
+                    placeholder=_('Enter password'),
+                ),
+            ],
+            className="mb-3",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Password (Confirm)'), html_for='password2'),
-            dbc.Input(type='password',
-                      id='password2',
-                      placeholder=_('Confirm password'),
-                     ),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Password (Confirm)'), html_for='password2'),
+                dbc.Input(
+                    type='password',
+                    id='password2',
+                    placeholder=_('Confirm password'),
+                ),
+            ],
+            className="mb-3",
+        ),
 
     ]
     # modal
@@ -140,54 +162,82 @@ def get_user_edit_modal():
 
         html.Div(id='user-edit-alert'),
 
-        dbc.FormGroup([
-            dbc.Checklist(id='user-options-edit',
-                          options=[{'label':_('Active'), 'value':'active'}],
-                          value=[],
-                         ),
-        ]),
-
-        dbc.FormGroup(
+        html.Div(
             [
-            dbc.Label(_('UID'), html_for='uid-edit'),
-            dbc.Col(html.Div(id='uid-edit'),
-                width=10, className='align-middle',
-            ),
+                dbc.Checklist(
+                    id='user-options-edit',
+                    options=[{'label':_('Active'), 'value':'active'}],
+                    value=[],
+                ),
             ],
-            row=True,
-            className='m-0',
+            className="mb-3",
         ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Name'), html_for='name-edit'),
-            dbc.Input(type='text', id='name-edit',
-                      placeholder=_('First and Last Name')),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('UID'), html_for='uid-edit'),
+                dbc.Col(
+                    html.Div(id='uid-edit'),
+                    width=10,
+                    className='align-middle',
+                ),
+            ],
+            # row=True,
+            # className='m-0',
+            className="m-0",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Email'), html_for='email-edit'),
-            dbc.Input(type='email',
-                      placeholder=_('Enter email'),
-                      disabled=True,
-                      id='email-edit',
-                     ),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Name'), html_for='name-edit'),
+                dbc.Input(
+                    type='text',
+                    id='name-edit',
+                    placeholder=_('First and Last Name')
+                ),
+            ],
+            className="mb-3",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Password'), html_for='password1-edit'),
-            dbc.Input(type='password',
-                      id='password1-edit',
-                      placeholder=_('Enter password'),
-                     ),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Email'), html_for='email-edit'),
+                dbc.Input(
+                    type='email',
+                    placeholder=_('Enter email'),
+                    disabled=True,
+                    id='email-edit',
+                ),
+            ],
+            className="mb-3",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Password (Confirm)'), html_for='password2-edit'),
-            dbc.Input(type='password',
-                      id='password2-edit',
-                      placeholder=_('Confirm password'),
-                     ),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Password'), html_for='password1-edit'),
+                dbc.Input(
+                    type='password',
+                    id='password1-edit',
+                    placeholder=_('Enter password'),
+                ),
+            ],
+            className="mb-3",
+        ),
+
+        html.Div(
+            [
+                dbc.Label(
+                    _('Password (Confirm)'),
+                    html_for='password2-edit'
+                ),
+                dbc.Input(
+                    type='password',
+                    id='password2-edit',
+                    placeholder=_('Confirm password'),
+                ),
+            ],
+            className="mb-3",
+        ),
 
     ]
 
@@ -569,7 +619,7 @@ def create_user_btn(btn, clear_btn, is_open, name, email, p1, p2, options):
         db.create_all()
         db.session.add(usr)
         db.session.commit()
-        return dbc.Alert(_('Acount created!'),
+        return dbc.Alert(_('Account created!'),
                          dismissable=True,
                          color='success'), None, None, None, None
     except IntegrityError:

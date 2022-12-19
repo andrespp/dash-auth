@@ -16,18 +16,25 @@ def layout():
     # Login Form
     login_form = [
 
-        dbc.FormGroup([
-            dbc.Label(_('Email'), html_for='email'),
-            dbc.Input(type='email', id='email', placeholder=_('Enter email')),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Email'), html_for='email'),
+                dbc.Input(type='email', id='email', placeholder=_('Enter email')),
+            ],
+            className="mb-3",
+        ),
 
-        dbc.FormGroup([
-            dbc.Label(_('Password'), html_for='password'),
-            dbc.Input(type='password',
-                      id='password',
-                      placeholder=_('Enter password'),
-                     ),
-        ]),
+        html.Div(
+            [
+                dbc.Label(_('Password'), html_for='password'),
+                dbc.Input(
+                    type='password',
+                    id='password',
+                    placeholder=_('Enter password'),
+                ),
+            ],
+            className="mb-3",
+        ),
 
         dbc.Button(_('Login'),
                    id='login-button',

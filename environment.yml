@@ -7,7 +7,7 @@ channels:
 dependencies:
   - python=3.11
   - dash
-  - dash-bootstrap-components<1
+  - dash-bootstrap-components
   - dash-core-components
   - dash-daq
   - dash-html-components
