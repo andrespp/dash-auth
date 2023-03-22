@@ -1,10 +1,8 @@
 """login.py
 """
-import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from dash.dependencies import Input, Output, State
-from app import _, app
+from app import _,
 
 alerts=[]
 

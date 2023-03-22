@@ -1,12 +1,11 @@
 """sales.py
 """
-import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from dash import dcc, html
-from dash.dependencies import Input, Output, State
-from app import app, DWO
+from dash.dependencies import Input, Output
+from app import app
 
 ###############################################################################
 # Report Definition

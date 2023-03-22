@@ -11,7 +11,7 @@ from dash import dcc, html, dash_table
 from sqlalchemy.exc import IntegrityError
 from dash.dependencies import Input, Output, State, ALL
 from werkzeug.security import generate_password_hash
-from app import _, app, db, DWO
+from app import _, app, db
 from models import User
 
 ###############################################################################
