@@ -7,7 +7,7 @@ import pandas as pd
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from flask_login import current_user, logout_user
-from app import _, app, config, DWO
+from app import _, app, config, AUTH
 from apps import home, users, sales, financial
 
 ###############################################################################
@@ -134,7 +134,7 @@ def layout(alerts=None):
 )
 def display_dashboard(pathname):
 
-    if not current_user.is_authenticated:
+    if AUTH and (not current_user.is_authenticated):
         return None
 
     else:

@@ -28,6 +28,22 @@ except:
     print('ERROR: Unable to read config file ("{}")'.format(CONFIG_FILE))
     exit(-1)
 
+# App settings
+if config['APP']['DEBUG'].lower() == 'true':
+    DEBUG=True
+else:
+    DEBUG=False
+
+if config['APP']['AUTH'].lower() == 'true':
+    AUTH=True
+else:
+    AUTH=False
+
+if config['APP']['USE_DW'].lower() == 'true':
+    USE_DW=True
+else:
+    USE_DW=False
+
 # Set locale
 locale.setlocale(locale.LC_MONETARY, config['SITE']['LANG'])
 
@@ -39,13 +55,15 @@ if config['SITE']['LANG'].split('.')[0]=='pt_BR':
     _ = pt_br.gettext # Brazilian portuguese
 
 # Initialize Data Warehouse object
-DWO = uetl.DataWarehouse(name=config['DW']['NAME'],
-                         dbms=config['DW']['DBMS'],
-                         host=config['DW']['HOST'],
-                         port=config['DW']['PORT'],
-                         base=config['DW']['BASE'],
-                         user=config['DW']['USER'],
-                         pswd=config['DW']['PASS'])
+DW = uetl.DataWarehouse(
+    name=config['DW']['NAME'],
+    dbms=config['DW']['DBMS'],
+    host=config['DW']['HOST'],
+    port=config['DW']['PORT'],
+    base=config['DW']['BASE'],
+    user=config['DW']['USER'],
+    pswd=config['DW']['PASS'],
+)
 
 # Flask server
 server = flask.Flask(__name__)
