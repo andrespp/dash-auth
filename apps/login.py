@@ -2,7 +2,7 @@
 """
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from app import _,
+from app import _
 
 alerts=[]
 
